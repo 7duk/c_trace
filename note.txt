@@ -1,0 +1,11 @@
+// Lệnh build file *.c
+    + gcc -o "programme name build" "programme name.c"
+    ex: gcc -c main main.c
+// Lệnh run file *.c
+    + ./"programme name build"
+    ex: ./main
+// Lệnh run file *.c với các tham số
+    + ./"programme name build" param1 param2 param3 ...
+// Lệnh build và chạy debug file *.c
+    + gcc -g -o "programme name build" "programme name.c"
+    + gdb ./"programme name build"

@@ -54,11 +54,16 @@ int main(int argc, char *argv[]) {
     pid_t child = fork();
     if (child == 0) {
         // Tiến trình con
+        printf("Đã tạo tiến trình con!")
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+        printf("argv[1] ------> "+argv[1] +"\n");
+
+        printf("&argv[1] -------> "+&argv[1] +"\n");
         execv(argv[1], &argv[1]);
     } else if (child > 0) {
         // Tiến trình cha (sandbox)
         printf("Chạy '%s' trong sandbox\n", argv[1]);
+        sleep(30);
         run_sandbox(child);
     } else {
         perror("fork");
