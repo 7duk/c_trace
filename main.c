@@ -60,13 +60,16 @@ int main(int argc, char *argv[]) {
         execvp(argv[1], argv + 1);
     } else {
         int status;
+        int index =0;
         while (1) {
             wait(&status);
             if (WIFEXITED(status))
                 break;
             analyze_syscall(child_pid);
             ptrace(PTRACE_SYSCALL, child_pid, NULL, NULL);
+            index++;
         }
+        printf("Size of files excuted:%d \n",index);
     }
     return 0;
 }
