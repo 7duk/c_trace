@@ -154,7 +154,7 @@
       <h3>Upload Files</h3>
       <div class="drop_box">
         <header>
-          <h4>Select File here</h4>
+          <h4>Select file here or drag and drop</h4>
         </header>
         <input type="file" hidden id="fileID">
         <button class="btn">Choose File</button>
@@ -174,8 +174,28 @@
       input.click();
     };
 
-    input.addEventListener("change", function (e) {
-      const file = e.target.files[0];
+    dropArea.addEventListener("dragover", (event) => {
+      event.preventDefault(); // Ngăn chặn hành vi mặc định để cho phép thả
+      dropArea.classList.add("active"); // Có thể thêm class để thay đổi kiểu dáng khi đang kéo
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove("active"); // Xóa class khi không còn kéo trên khu vực
+    });
+
+    dropArea.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropArea.classList.remove("active"); // Xóa class khi thả
+
+      const files = event.dataTransfer.files; // Lấy file từ sự kiện thả
+      if (files.length) {
+        input.files = files; // Gán file vào input
+        handleFiles(files); // Gọi hàm xử lý file
+      }
+    });
+
+    function handleFiles(files) {
+      const file = files[0];
       if (file) {
         const fileName = file.name;
         const shortFileName = fileName.length > 20 ?
@@ -188,6 +208,13 @@
                     </div>`;
         dropArea.innerHTML = filedata;
       }
+    }
+
+    input.addEventListener("change", function (e) {
+      const files = e.target.files;
+      if (files.length) {
+        handleFiles(files);
+      }
     });
 
     function uploadFile() {
@@ -195,23 +222,19 @@
       let file = input.files[0];
       if (!file) return;
       const commandText = _("command_text");
-      if(!commandText){
+      if (!commandText) {
         return;
-      }else{
+      } else {
         const command = commandText.value;
-        if(!command){
+        if (!command) {
           alert("Command text must be not null!")
           return;
         }
-        else{
-          formData.append("command",command);
+        else {
+          formData.append("command", command);
         }
       }
-
-
-     
       formData.append("file", file);
-
       var ajax = new XMLHttpRequest();
       ajax.upload.addEventListener("progress", progressHandler, false);
       ajax.addEventListener("load", completeHandler, false);
