@@ -8,6 +8,14 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
+#include <sys/resource.h>
+#include <time.h>
+#include <stdarg.h>
+
+#define MAX_SYSCALLS 100
+#define PATH_MAX 4096
+#define LOG_FILE "sandbox.log"
 
 // Danh sách các system call được phép
 int allowed_syscalls[] = {
@@ -36,33 +44,55 @@ int allowed_syscalls[] = {
 };
 int num_allowed_syscalls = sizeof(allowed_syscalls) / sizeof(int);
 
-#define PATH_MAX 4096
+enum LogLevel
+{
+    LOG_INFO,
+    LOG_WARNING,
+    LOG_ERROR
+};
 
-// Hàm ánh xạ địa chỉ đến dòng mã nguồn
+struct ResourceUsage
+{
+    long cpu_time;
+    long memory_usage;
+    long io_operations;
+};
+
 void get_source_info(unsigned long long rip, const char *binary)
 {
-    char command[512];
-    // Sử dụng dấu ngoặc kép xung quanh đường dẫn của file thực thi để xử lý khoảng trắng
-    snprintf(command, sizeof(command), "addr2line -e %s %llx", binary, rip);
-    system(command);
+    printf("Rip info : %llx\n", rip);
+    printf("Binary : %s\n",binary);
+    char command[PATH_MAX * 2];
+    snprintf(command, sizeof(command), "addr2line -e '%s' %llx", binary, rip);
+    FILE *fp = popen(command, "r");
+    if (fp == NULL)
+    {
+        perror("popen");
+        return;
+    }
+    char output[256];
+    if (fgets(output, sizeof(output), fp) != NULL)
+    {
+        printf("Source info: %s", output);
+    }
+    pclose(fp);
 }
 
-// Hàm lấy tên file thực thi của tiến trình
 void get_executable_path(pid_t pid, char *buffer, size_t size)
 {
     char path[PATH_MAX];
     snprintf(path, sizeof(path), "/proc/%d/exe", pid);
-    ssize_t len = readlink(path, buffer, size - 1); // Giảm 1 để giữ chỗ cho null terminator
+    ssize_t len = readlink(path, buffer, size - 1);
     if (len != -1)
     {
-        buffer[len] = '\0'; // Đảm bảo chuỗi kết thúc
-        printf("Đường dẫn của file thực thi: %s\n", buffer);
+        buffer[len] = '\0';
+        printf("Executable path: %s\n", buffer);
     }
     else
     {
-        // perror("readlink");
-        printf("Không thể lấy đường dẫn của file thực thi. Lỗi: %s\n", strerror(errno));
-        strncpy(buffer, "unknown", size); // Nếu có lỗi, gán giá trị mặc định
+        fprintf(stderr, "Failed to get executable path. Error: %s\n", strerror(errno));
+        strncpy(buffer, "unknown", size - 1);
+        buffer[size - 1] = '\0';
     }
 }
 
@@ -78,52 +108,138 @@ int is_syscall_allowed(long syscall)
     return 0;
 }
 
-void run_sandbox(pid_t child)
+// New function for logging
+void log_message(enum LogLevel level, const char *format, ...) {
+    FILE *log_file = fopen(LOG_FILE, "a");
+    if (log_file == NULL) {
+        perror("Failed to open log file");
+        return;
+    }
+
+    time_t now;
+    time(&now);
+    char *date = ctime(&now);
+    date[strlen(date) - 1] = '\0';  // Remove newline
+
+    fprintf(log_file, "[%s] ", date);
+
+    switch (level) {
+        case LOG_INFO:    fprintf(log_file, "[INFO] "); break;
+        case LOG_WARNING: fprintf(log_file, "[WARNING] "); break;
+        case LOG_ERROR:   fprintf(log_file, "[ERROR] "); break;
+    }
+
+    va_list args;
+    va_start(args, format);
+    vfprintf(log_file, format, args);
+    va_end(args);
+
+    fprintf(log_file, "\n");
+    fclose(log_file);
+}
+
+void monitor_resources(pid_t pid, struct ResourceUsage *usage)
+{
+    struct rusage ru;
+    if (getrusage(RUSAGE_CHILDREN, &ru) == 0)
+    {
+        usage->cpu_time = ru.ru_utime.tv_sec * 1000000 + ru.ru_utime.tv_usec +
+                          ru.ru_stime.tv_sec * 1000000 + ru.ru_stime.tv_usec;
+        usage->memory_usage = ru.ru_maxrss;
+        usage->io_operations = ru.ru_inblock + ru.ru_oublock;
+        log_message(LOG_INFO, "Resource usage - CPU time: %ld us, Memory: %ld KB, I/O: %ld operations",
+                    usage->cpu_time, usage->memory_usage, usage->io_operations);
+    }
+}
+
+void set_resource_limits()
+{
+    struct rlimit rl;
+    rl.rlim_cur = rl.rlim_max = 5; // 5 seconds CPU time
+    if (setrlimit(RLIMIT_CPU, &rl) == -1)
+    {
+        perror("setrlimit CPU");
+    }
+    rl.rlim_cur = rl.rlim_max = 50 * 1024 * 1024; // 50MB of memory
+    if (setrlimit(RLIMIT_AS, &rl) == -1)
+    {
+        perror("setrlimit AS");
+    }
+}
+
+void run_sandbox(pid_t child, pid_t parent_pid)
 {
     int status;
     struct user_regs_struct regs;
-    int in_syscall = 0; // 0: trước khi thực hiện syscall, 1: sau syscall
+    int in_syscall = 0;
+    struct ResourceUsage usage;
 
     while (1)
     {
-        wait(&status); // Chờ tiến trình con dừng lại
-        if (WIFEXITED(status))
-        { // Tiến trình con kết thúc
+        if (waitpid(child, &status, 0) == -1)
+        {
+            perror("waitpid");
+            log_message(LOG_ERROR, "waitpid failed: %s", strerror(errno));
             break;
         }
 
-        if (WIFSTOPPED(status))
+        if (WIFEXITED(status))
         {
-            ptrace(PTRACE_GETREGS, child, NULL, &regs);
+            printf("Child exited with status %d\n", WEXITSTATUS(status));
+            log_message(LOG_INFO, "Child exited with status %d", WEXITSTATUS(status));
+            break;
+        }
+        else if (WIFSIGNALED(status))
+        {
+            printf("Child killed by signal %d\n", WTERMSIG(status));
+            log_message(LOG_INFO, "Child killed by signal %d", WTERMSIG(status));
+            break;
+        }
+        else if (WIFSTOPPED(status))
+        {
+            if (ptrace(PTRACE_GETREGS, child, NULL, &regs) == -1)
+            {
+                perror("ptrace GETREGS");
+                log_message(LOG_ERROR, "ptrace GETREGS failed: %s", strerror(errno));
+                continue;
+            }
 
             if (in_syscall == 0)
-            { // Trước khi thực hiện syscall
-                printf("System call số: %lld\n", regs.orig_rax);
-                if (!is_syscall_allowed(regs.orig_rax))
+            {
+                printf("Syscall number: %lld\n", regs.orig_rax);
+                log_message(LOG_INFO, "Syscall number: %lld", regs.orig_rax);
+                if (!is_syscall_allowed(regs.orig_rax) && child != parent_pid)
                 {
-                    printf("Bị chặn: %lld\n", regs.orig_rax);
-
+                    printf("Blocked syscall: %lld\n", regs.orig_rax);
                     printf("Position: %lld\n", regs.rip);
+                    log_message(LOG_WARNING, "Blocked syscall: %lld at position: %lld", regs.orig_rax, regs.rip);
 
                     char executable[PATH_MAX];
                     get_executable_path(child, executable, sizeof(executable));
-
-                    // Ánh xạ địa chỉ RIP đến dòng mã nguồn
                     get_source_info(regs.rip, executable);
-                    // regs.orig_rax = -1;  // Chặn system call
-                    // ptrace(PTRACE_SETREGS, child, NULL, &regs);
-                    ptrace(PTRACE_KILL, child, NULL, NULL);
-                    break;
-                }
 
-                in_syscall = 1; // Đánh dấu đang sau khi syscall
+                    regs.rax = -EPERM;
+                    if (ptrace(PTRACE_SETREGS, child, NULL, &regs) == -1)
+                    {
+                        perror("ptrace SETREGS");
+                        log_message(LOG_ERROR, "ptrace SETREGS failed: %s", strerror(errno));
+                    }
+                }
+                in_syscall = 1;
             }
             else
             {
-                in_syscall = 0; // Sau khi syscall
+                printf("Syscall return value: %lld\n", regs.rax);
+                log_message(LOG_INFO, "Syscall return value: %lld", regs.rax);
+                in_syscall = 0;
             }
-
-            ptrace(PTRACE_SYSCALL, child, NULL, NULL); // Tiếp tục theo dõi syscall
+            monitor_resources(child, &usage);
+            if (ptrace(PTRACE_SYSCALL, child, NULL, NULL) == -1)
+            {
+                perror("ptrace SYSCALL");
+                log_message(LOG_ERROR, "ptrace SYSCALL failed: %s", strerror(errno));
+                break;
+            }
         }
     }
 }
@@ -132,31 +248,44 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        fprintf(stderr, "Sử dụng: %s <chương trình cần chạy trong sandbox>\n", argv[0]);
-        exit(1);
+        fprintf(stderr, "Usage: %s <program to run in sandbox>\n", argv[0]);
+        exit(EXIT_FAILURE);
     }
-
+    log_message(LOG_INFO, "Starting sandbox for program: %s", argv[1]);
+    pid_t parent_pid = getpid();
     pid_t child = fork();
+
     if (child == 0)
     {
-        // Tiến trình con
-        printf("Đã tạo tiến trình con!\n");
-        ptrace(PTRACE_TRACEME, 0, NULL, NULL); // Yêu cầu giám sát bởi cha
+        // Child process
+        printf("Child process created!\n");
+        log_message(LOG_INFO, "Child process created");
+        if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1)
+        {
+            perror("ptrace TRACEME");
+            log_message(LOG_ERROR, "ptrace TRACEME failed: %s", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+        set_resource_limits();
         if (execv(argv[1], &argv[1]) == -1)
         {
-            printf("Execv failed: %s\n", strerror(errno));
+            log_message(LOG_ERROR, "execv failed: %s", strerror(errno));
+            perror("execv");
+            exit(EXIT_FAILURE);
         }
     }
     else if (child > 0)
     {
-        // Tiến trình cha (sandbox)
-        printf("Chạy '%s' trong sandbox\n", argv[1]);
-        run_sandbox(child); // Bắt đầu giám sát tiến trình con
+        // Parent process (sandbox)
+        printf("Running '%s' in sandbox\n", argv[1]);
+        log_message(LOG_INFO, "Running '%s' in sandbox", argv[1]);
+        run_sandbox(child, parent_pid);
     }
     else
     {
         perror("fork");
-        exit(1);
+        log_message(LOG_ERROR, "fork failed: %s", strerror(errno));
+        exit(EXIT_FAILURE);
     }
 
     return 0;

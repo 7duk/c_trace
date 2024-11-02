@@ -2,27 +2,34 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <string.h>
 
-int main() {
+int main()
+{
     char buffer[128];
     int fd;
 
     // Test system call: write (this should be allowed)
-    write(STDOUT_FILENO, "Đây là một kiểm tra system call write.\n", 40);
+    const char *message = "Kiểm tra system call write --->\n";
+    write(STDOUT_FILENO, message, strlen(message)); // Sử dụng strlen để lấy chiều dài chính xác
 
     // Test system call: open và read (đọc nội dung từ một file)
     fd = open("testfile.txt", O_RDONLY);
-    if (fd == -1) {
+    if (fd == -1)
+    {
         perror("Lỗi khi mở file");
         exit(1);
     }
 
     // Test system call: read (this should be allowed)
-    int n = read(fd, buffer, sizeof(buffer)-1);
-    if (n > 0) {
+    int n = read(fd, buffer, sizeof(buffer) - 1);
+    if (n > 0)
+    {
         buffer[n] = '\0';
         printf("Đọc được nội dung từ file: %s\n", buffer);
-    } else {
+    }
+    else
+    {
         perror("Lỗi khi đọc file");
     }
 
