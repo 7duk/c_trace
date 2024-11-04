@@ -9,3 +9,21 @@
 // Lệnh build và chạy debug file *.c
     + gcc -g -o "programme name build" "programme name.c"
     + gdb ./"programme name build"
+
+//Cài đặt python3-venv nếu chưa có :
+    sudo apt install python3-venv
+
+//Tao moi truong ao :
+    python3 -m venv myenv
+
+//Kích hoạt môi trường ảo:
+    source myenv/bin/activate
+
+// Cài Đặt Flask hoac cac thu vien khac: 
+    pip install Flask
+
+// Thoát Khỏi Môi Trường Ảo (Nếu Cần)
+    deactivate
+
+// Lenh run chuong trinh python:
+    python3 file*.py

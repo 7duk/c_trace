@@ -1,0 +1,644 @@
+[Mon Nov  4 15:40:19 2024] [INFO] Starting sandbox for program: ./test
+[Mon Nov  4 15:40:19 2024] [INFO] Child process created
+[Mon Nov  4 15:40:19 2024] [INFO] Running './test' in sandbox
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 59
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 12
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 21
+[Mon Nov  4 15:40:19 2024] [WARNING] Blocked syscall: 21 at position: 126681029408971
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 257
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 5
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 3
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 257
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 0
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 17
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 5
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 17
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:19 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:19 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 3
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 9
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 158
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 218
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 273
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 334
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 10
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 10
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 10
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 302
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 11
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 1
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 257
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 0
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 5
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 318
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 12
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 12
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 1
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 1
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall number: 3
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 15:40:20 2024] [INFO] Resource usage - CPU time: 9674 us, Memory: 9856 KB, I/O: 0 operations
+[Mon Nov  4 15:40:20 2024] [INFO] Child exited with status 0
+[Mon Nov  4 17:14:53 2024] [INFO] Starting sandbox for program: ./test
+[Mon Nov  4 17:14:53 2024] [INFO] Running './test' in sandbox
+[Mon Nov  4 17:14:53 2024] [INFO] Child process created
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 59
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 0 us, Memory: 0 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 21
+[Mon Nov  4 17:14:53 2024] [WARNING] Blocked syscall: 21 at position: 132757221865675
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 0
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 17
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 17
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 158
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 218
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 273
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 334
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 302
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 11
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 0
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 318
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:14:53 2024] [INFO] Resource usage - CPU time: 22212 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:14:53 2024] [INFO] Child exited with status 0
+[Mon Nov  4 17:22:24 2024] [INFO] Starting sandbox for program: ./test
+[Mon Nov  4 17:22:24 2024] [INFO] Running './test' in sandbox
+[Mon Nov  4 17:22:24 2024] [INFO] Child process created
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 59
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 58617 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 58617 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 58617 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 58617 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 58617 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 58617 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 21
+[Mon Nov  4 17:22:24 2024] [WARNING] Blocked syscall: 21 at position: 130107596974283
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 0
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 17
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 17
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 158
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 218
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 273
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 334
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 302
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 11
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 0
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 318
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:22:24 2024] [INFO] Resource usage - CPU time: 66756 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:22:24 2024] [INFO] Child exited with status 0
+[Mon Nov  4 17:24:43 2024] [INFO] Starting sandbox for program: ./test
+[Mon Nov  4 17:24:43 2024] [INFO] Running './test' in sandbox
+[Mon Nov  4 17:24:43 2024] [INFO] Child process created
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 59
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 83483 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 83483 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 83483 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 83483 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 83483 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 83483 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 21
+[Mon Nov  4 17:24:43 2024] [WARNING] Blocked syscall: 21 at position: 131581179041995
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 0
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 17
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 17
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 9
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 158
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 218
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 273
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 334
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 10
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 302
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 11
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 257
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 0
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 5
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 318
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 12
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 1
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall number: 3
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Syscall return value: -38
+[Mon Nov  4 17:24:43 2024] [INFO] Resource usage - CPU time: 91502 us, Memory: 31616 KB, I/O: 0 operations
+[Mon Nov  4 17:24:43 2024] [INFO] Child exited with status 0

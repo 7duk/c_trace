@@ -61,7 +61,7 @@ struct ResourceUsage
 void get_source_info(unsigned long long rip, const char *binary)
 {
     printf("Rip info : %llx\n", rip);
-    printf("Binary : %s\n",binary);
+    printf("Binary : %s\n", binary);
     char command[PATH_MAX * 2];
     snprintf(command, sizeof(command), "addr2line -e '%s' %llx", binary, rip);
     FILE *fp = popen(command, "r");
@@ -109,9 +109,11 @@ int is_syscall_allowed(long syscall)
 }
 
 // New function for logging
-void log_message(enum LogLevel level, const char *format, ...) {
+void log_message(enum LogLevel level, const char *format, ...)
+{
     FILE *log_file = fopen(LOG_FILE, "a");
-    if (log_file == NULL) {
+    if (log_file == NULL)
+    {
         perror("Failed to open log file");
         return;
     }
@@ -119,14 +121,21 @@ void log_message(enum LogLevel level, const char *format, ...) {
     time_t now;
     time(&now);
     char *date = ctime(&now);
-    date[strlen(date) - 1] = '\0';  // Remove newline
+    date[strlen(date) - 1] = '\0'; // Remove newline
 
     fprintf(log_file, "[%s] ", date);
 
-    switch (level) {
-        case LOG_INFO:    fprintf(log_file, "[INFO] "); break;
-        case LOG_WARNING: fprintf(log_file, "[WARNING] "); break;
-        case LOG_ERROR:   fprintf(log_file, "[ERROR] "); break;
+    switch (level)
+    {
+    case LOG_INFO:
+        fprintf(log_file, "[INFO] ");
+        break;
+    case LOG_WARNING:
+        fprintf(log_file, "[WARNING] ");
+        break;
+    case LOG_ERROR:
+        fprintf(log_file, "[ERROR] ");
+        break;
     }
 
     va_list args;
@@ -244,7 +253,7 @@ void run_sandbox(pid_t child, pid_t parent_pid)
     }
 }
 
-int main(int argc, char *argv[])
+void run(int argc, char *argv[])
 {
     if (argc < 2)
     {
@@ -287,6 +296,9 @@ int main(int argc, char *argv[])
         log_message(LOG_ERROR, "fork failed: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
-
+}
+int main(int argc, char *argv[])
+{
+    run(argc,argv);
     return 0;
 }
