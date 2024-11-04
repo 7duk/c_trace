@@ -27,3 +27,8 @@
 
 // Lenh run chuong trinh python:
     python3 file*.py
+
+// biên dịch mã c này thành thư viện chia sẻ:
+    gcc -shared -o sandbox.so -fPIC sandbox.c
+    
+// su dung ctypes.
