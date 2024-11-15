@@ -15,10 +15,13 @@ import os
 app = Flask(__name__)
 @app.route('/analyst', methods=['POST'])
 def run_in_sandbox():
+   
     # Lấy file từ request
+    print('hello world!---->1')
     file = request.files['file']
+    print('hello world!---->2')
     command = request.form['command']  # Lấy command từ form data
-
+    print('hello world!')
     # Lưu file vào thư mục hiện tại
     file_path = './' + file.filename
     file.save(file_path)
