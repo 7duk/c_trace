@@ -1,0 +1,42 @@
+// Lệnh build file *.c
+    + gcc -o "programme name build" "programme name.c"
+    ex: gcc -c main main.c
+// Lệnh run file *.c
+    + ./"programme name build"
+    ex: ./main
+// Lệnh run file *.c với các tham số
+    + ./"programme name build" param1 param2 param3 ...
+// Lệnh build và chạy debug file *.c
+    + gcc -g -o "programme name build" "programme name.c"
+    + gdb ./"programme name build"
+
+//Cài đặt python3-venv nếu chưa có :
+    sudo apt install python3-venv
+
+//Tao moi truong ao :
+    python3 -m venv myenv
+
+//Kích hoạt môi trường ảo:
+    source myenv/bin/activate
+
+// Cài Đặt Flask hoac cac thu vien khac: 
+    pip install Flask
+
+// Thoát Khỏi Môi Trường Ảo (Nếu Cần)
+    deactivate
+
+// Lenh run chuong trinh python:
+    python3 file*.py
+
+// biên dịch mã c này thành thư viện chia sẻ:
+    gcc -shared -o sandbox.so -fPIC sandbox.c
+    
+// su dung ctypes.
+
+docker run -dit --name apache-server -p 8080:80 -v E:\FINAL_PROJECT:/usr/local/apache2/htdocs httpd
+
+docker run --rm -it httpd:2.4 cat /usr/local/apache2/conf/httpd.conf > httpd.conf
+
+docker build -f dockerfile.web -t website-image .
+
+docker run -d -p 8080:80 --name website-container website-image

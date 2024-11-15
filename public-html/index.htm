@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sandbox Analysis System</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./service/utils.js"></script>
+  <script src="./service/apiService.js"></script>
+  <script src="./service/dialog.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-bg: #ffffff;
+      --secondary-bg: #f8f9fa;
+      --accent-color: #0d6efd;
+      --hover-color: #0b5ed7;
+      --text-primary: #212529;
+      --text-secondary: #6c757d;
+      --border-color: #dee2e6;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--secondary-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .header {
+      background: var(--primary-bg);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px var(--shadow-color);
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .analysis-panel {
+      background: var(--primary-bg);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px var(--shadow-color);
+      border: 1px solid var(--border-color);
+    }
+
+    .command-section {
+      margin-bottom: 2rem;
+    }
+
+    .command-label {
+      display: block;
+      margin-bottom: 0.8rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .command-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--primary-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .command-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--accent-color);
+      border-radius: var(--border-radius);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      background: rgba(13, 110, 253, 0.03);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .drop-zone.active {
+      border-color: #198754;
+      background: rgba(25, 135, 84, 0.03);
+    }
+
+    .drop-zone h4 {
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      font-weight: normal;
+    }
+
+    .upload-icon {
+      font-size: 2.5rem;
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      background: var(--accent-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: var(--hover-color);
+      transform: translateY(-1px);
+    }
+
+    .btn i {
+      font-size: 1.1rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--secondary-bg);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-top: 1rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .file-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .progress-section {
+      margin-top: 1.5rem;
+    }
+
+    progress {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    progress::-webkit-progress-bar {
+      background-color: var(--secondary-bg);
+      border: 1px solid var(--border-color);
+    }
+
+    progress::-webkit-progress-value {
+      background: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    #status,
+    #loaded_n_total {
+      text-align: center;
+      margin-top: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--primary-bg);
+      padding: 0;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .modal::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--secondary-bg);
+    }
+
+    .modal-header h2 {
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    .modal-content {
+      padding: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .modal-content a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .modal-content a:hover {
+      text-decoration: underline;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      text-align: right;
+      background: var(--secondary-bg);
+    }
+
+    .btn-success {
+      background: #198754;
+    }
+
+    .btn-success:hover {
+      background: #157347;
+    }
+
+    .header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .user-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* .username {
+      color: var(--text-secondary);
+    } */
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--accent-color);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .btn-icon:hover {
+      color: var(--hover-color);
+    }
+
+    .btn-icon.disabled {
+      color: var(--text-secondary);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .btn-logout {
+      background: var(--accent-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: var(--hover-color);
+    }
+
+    .btn-login {
+      background: var(--accent-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .btn-login:hover {
+      background: var(--hover-color);
+    }
+
+
+    .auth-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--primary-bg);
+      padding: 0;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .auth-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    /* .auth-dialog-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--secondary-bg);
+    } */
+
+    .auth-dialog-content {
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .auth-dialog-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      text-align: right;
+      background: var(--secondary-bg);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-controls">
+        <h1>File Analysis System</h1>
+        <div class="user-controls">
+          <div class="btn-icon" title="Username" onclick="handleProfile()">
+            <i class="fa-solid fa-user"></i>
+            <span class="username" id="currentUser"></span>
+          </div>
+          <button class="btn-icon" id="dashboardBtn" title="Dashboard">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+          </button>
+          <button id="btnHandle" class="btn-logout" onclick="handleLogout()">Logout</button>
+        </div>
+      </div>
+      <p>Upload and analyze files for security assessment</p>
+    </header>
+
+    <main class="analysis-panel">
+      <!-- <div class="command-section">
+        <label class="command-label" for="command_text">Parameters</label>
+        <input type="text" id="command_text" class="command-input" placeholder="Enter your parameters" />
+      </div> -->
+
+      <div class="drop-zone" id="drop_box">
+        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+        <h4>Drag and drop your file here or click to browse</h4>
+        <p style="color: gray; font-size: 12px; padding-bottom: 5px;">
+          Supported file types: [.jar,.py,.js,.xlsx,.csv,.sh,.doc,.docx,.exe]
+        </p>
+        <input type="file" id="fileID" hidden accept=".jar,.py,.js,.xlsx,.csv,.sh,.doc,.docx,.exe" />
+        <button class="btn">
+          <i class="fas fa-file-upload"></i>
+          Select File
+        </button>
+        <p id="errorMessage" style="color: red; display: none;">Invalid file type. Please select a valid file.</p>
+
+      </div>
+
+      <div class="progress-section">
+        <progress id="progressBar" value="0" max="100"></progress>
+        <h3 id="status"></h3>
+        <p id="loaded_n_total"></p>
+      </div>
+    </main>
+
+    <dialog class="modal" id="myDialog">
+      <div class="modal-header">
+        <h2>Request Submitted</h2>
+      </div>
+
+      <div class="modal-content">
+        <p>Your request has been successfully received. The results will be updated and displayed gradually at the
+          following link:</p>
+        <p style="margin-top: 1rem;">
+          <a id="resultLink" href="#" target="_blank">
+            <i class="fas fa-external-link-alt"></i>
+            View Results
+          </a>
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-success" onclick="handleConfirm()">
+          <i class="fas fa-check"></i>
+          Confirm
+        </button>
+      </div>
+    </dialog>
+    <dialog class="auth-dialog" id="authDialog">
+      <!-- <div class="auth-dialog-header">
+        <h2>Notification</h2>
+      </div> -->
+      <div class="auth-dialog-content">
+        <p>Please login to continue.</p>
+      </div>
+      <div class="auth-dialog-footer">
+        <button class="btn" onclick="redirectToLogin()">
+          <i class="fas fa-sign-in-alt"></i>
+          Login
+        </button>
+      </div>
+    </dialog>
+  </div>
+
+  <script>
+
+    function checkAuth() {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        document.getElementById('authDialog').showModal();
+        return true;
+      }
+      return false;
+
+
+    }
+
+    function loadData() {
+      // Update UI with username
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        const btnHandle = document.getElementById('btnHandle');
+        if (btnHandle) {
+          btnHandle.textContent = 'Login';
+          btnHandle.className = "btn-login";
+          btnHandle.addEventListener('click', redirectToLogin);
+        }
+        var elements = document.getElementsByClassName('btn-icon');
+        for (var i = 0; i < elements.length; i++) {
+          console.log(elements[i]);
+          elements[i].style.visibility = 'hidden';
+        }
+
+
+      }
+      const fullname = localStorage.getItem('fullname');
+      document.getElementById('currentUser').textContent = fullname;
+
+      // Configure dashboard button based on role
+      const dashboardBtn = document.getElementById('dashboardBtn');
+      dashboardBtn.addEventListener('click', () => {
+        const role = localStorage.getItem('role');
+        if (role === 'ADMIN') {
+          window.location.href = 'admin-dashboard.htm';
+        } else {
+          window.location.href = 'user-dashboard.htm';
+        }
+      });
+    }
+
+    function redirectToLogin() {
+      window.location.href = 'login.htm';
+    }
+
+    document.addEventListener('DOMContentLoaded', loadData);
+
+    function handleProfile() {
+      window.location.href = 'profile.htm';
+    }
+    async function handleLogout() {
+      const userId = localStorage.getItem('user_id');
+      try {
+        const response = await fetch('./config/config.json');
+        const config = await response.json();
+        let requestUrl = `http://${config.ip}:8081/api/v1/auth/logout?userId=${userId}`;
+        const result = await apiService.get(requestUrl);
+        if (result.data.status === '200') {
+          localStorage.removeItem('access_token');
+          destroyCookie('refreshToken');
+          localStorage.removeItem('fullname');
+          localStorage.removeItem('user_id');
+          localStorage.removeItem('role');
+          localStorage.removeItem('mail');
+          localStorage.removeItem('username');
+          localStorage.removeItem('created_at');
+          loadData();
+        }
+
+      }
+      catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+      }
+    }
+
+
+    const dropArea = document.querySelector(".drop-zone");
+    const button = dropArea.querySelector("button");
+    const input = dropArea.querySelector("input");
+
+    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    button.onclick = (event) => {
+      if (!checkAuth()) {
+        event.preventDefault();
+        input.click();
+      }
+    };
+
+    dropArea.addEventListener("dragenter", (event) => {
+      preventDefaults(event);
+      dropArea.classList.add("active");
+    });
+
+    dropArea.addEventListener("dragover", (event) => {
+      preventDefaults(event);
+      dropArea.classList.add("active");
+    });
+
+    dropArea.addEventListener("dragleave", (event) => {
+      preventDefaults(event);
+      if (!dropArea.contains(event.relatedTarget)) {
+        dropArea.classList.remove("active");
+      }
+    });
+
+    dropArea.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropArea.classList.remove("active");
+
+      const files = event.dataTransfer.files;
+      if (files.length) {
+        input.files = files;
+        handleFiles(files);
+      }
+    });
+
+    function handleFiles(files) {
+      const file = files[0];
+      const errorMessage = document.getElementById("errorMessage");
+      const validExtensions = [".jar", ".py", ".js", ".xlsx", ".csv", ".sh", ".doc", ".docx", ".exe", ".pdf"];
+      if (file) {
+        const fileExtension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+        if (validExtensions.includes(fileExtension)) {
+          const fileName = file.name;
+          const shortFileName =
+            fileName.length > 20 ? fileName.substring(0, 20) + "..." : fileName;
+          const filedata = `
+                    <div class="file-info">
+                        <span class="file-name">
+                            <i class="fas fa-file"></i>
+                            ${shortFileName}
+                        </span>
+                        <button type="button" class="btn" onclick="uploadFile()">
+                            <i class="fas fa-play"></i>
+                            Start Analysis
+                        </button>
+                    </div>`;
+          dropArea.innerHTML = filedata;
+        }
+        else {
+          errorMessage.style.display = "block";
+        }
+      }
+    }
+
+    input.addEventListener("change", function (e) {
+      const files = e.target.files;
+      if (files.length) {
+        handleFiles(files);
+      }
+    });
+
+    async function uploadFile() {
+      try {
+        const response = await fetch('./config/config.json');
+        const config = await response.json();
+        let formData = new FormData();
+        let file = input.files[0];
+        if (!file) return;
+        formData.append("file", file);
+        const accessToken = localStorage.getItem('access_token');
+        const userId = localStorage.getItem('user_id');
+        const responseData = await apiService.post(`http://${config.ip}:8081/api/v1/upload?userId=${userId}`,
+          formData,
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'multipart/form-data'
+            }, onUploadProgress: (progressEvent) => {
+              updateProgress(progressEvent);
+            },
+          }
+        );
+        if (responseData.status == 202) {
+          openDialog(responseData.data.requestID);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        errorHandler();
+      }
+    }
+
+
+
+    function _(id) {
+      return document.getElementById(id);
+    }
+
+    function updateProgress(event) {
+      if (event.total) {
+        const percent = (event.loaded / event.total) * 100;
+        _("progressBar").value = Math.round(percent);
+        _("status").innerHTML = `${Math.round(percent)}% uploaded... please wait`;
+        _("loaded_n_total").innerHTML = `Uploaded ${event.loaded} of ${event.total} bytes`;
+      } else {
+        _("status").innerHTML = "Calculating upload progress...";
+      }
+    }
+
+    // function progressHandler(event) {
+    //   var percent = (event.loaded / event.total) * 100;
+    //   _("progressBar").value = Math.round(percent);
+    //   _("status").innerHTML =
+    //     Math.round(percent) + "% analyzed... please wait";
+    //   _("loaded_n_total").innerHTML =
+    //     "Analyzed " + event.loaded + " of " + event.total + " bytes";
+    // }
+
+    // function completeHandler(event) {
+    //   const data = JSON.parse(event.target.responseText);
+    //   openDialog(data.requestID);
+    // }
+
+    function errorHandler() {
+      _("status").innerHTML = "Analysis Failed";
+    }
+
+    // function abortHandler() {
+    //   _("status").innerHTML = "Analysis Aborted";
+    // }
+
+    const dialog = document.getElementById('myDialog');
+
+    function openDialog(requestID) {
+      _('resultLink').href = `result.htm?requestID=${requestID}`;
+      dialog.showModal();
+    }
+
+    function closeDialog() {
+      dialog.close();
+    }
+
+    function handleConfirm() {
+      closeDialog();
+      window.location.reload();
+    }
+
+    dialog.addEventListener('click', (e) => {
+      const dialogDimensions = dialog.getBoundingClientRect();
+      if (
+        e.clientX < dialogDimensions.left ||
+        e.clientX > dialogDimensions.right ||
+        e.clientY < dialogDimensions.top ||
+        e.clientY > dialogDimensions.bottom
+      ) {
+        dialog.close();
+      }
+    });
+  </script>
+</body>
+
+</html>

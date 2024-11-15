@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./service/utils.js"></script>
+    <script src="./service/apiService.js"></script>
+    <script src="./service/dialog.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8f9fa;
+            --accent-color: #0d6efd;
+            --hover-color: #0b5ed7;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            padding: 20px;
+            background: #f5f6fa;
+            min-height: 100vh;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-controls :hover {
+            color: #0b5ed7;
+        }
+
+        .btn-logout {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: var(--hover-color);
+            color: white;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-back:hover {
+            color: #2980b9;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #0d6efd;
+            ;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+            font-size: 14px;
+            color: #444;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td.request-id {
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+            cursor: pointer;
+        }
+
+        td.request-id:hover::after {
+            content: attr(data-full-text);
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            top: 50%;
+            left: 105%;
+            transform: translateY(-50%);
+            white-space: normal;
+            z-index: 10;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+        }
+
+        td.request-id:hover {
+            overflow: visible;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+            cursor: pointer;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            text-transform: capitalize;
+            font-weight: bold;
+        }
+
+        .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.accept {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        #loadingIndicator {
+            text-align: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="btn-back" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>My Requests</h1>
+            </div>
+            <div class="user-controls">
+                <div class="btn-icon" title="Username">
+                    <i class="fa-solid fa-user"></i>
+                    <span class="username" id="currentUser" onclick="handleProfile()"></span>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Request ID</th>
+                        <th>Status</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsTable">
+                </tbody>
+            </table>
+            <div id="loadingIndicator" style="display: none;">
+                <span>Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleProfile() {
+            window.location.href = 'profile.htm';
+        }
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = 'index.htm';
+            }
+            const fullname = localStorage.getItem('fullname');
+            document.getElementById('currentUser').textContent = fullname;
+        }
+
+        async function handleLogout() {
+            const userId = localStorage.getItem('user_id');
+            try {
+                const response = await fetch('./config/config.json');
+                const config = await response.json();
+                let requestUrl = `http://${config.ip}:8081/api/v1/auth/logout?userId=${userId}`;
+                const result = await apiService.get(requestUrl);
+                if (result.data.status === '200') {
+                    localStorage.removeItem('access_token');
+                    destroyCookie('refreshToken');
+                    localStorage.removeItem('fullname');
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('role');
+                    localStorage.removeItem('mail');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('created_at');
+                }
+                checkAuth();
+            }
+            catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'index.htm';
+        }
+
+        let currentPage = 0;
+        const pageSize = 10;
+        let isLoading = false;
+        let hasMoreData = true;
+
+        async function fetchPageData(page, size) {
+            const response = await fetch('./config/config.json');
+            const config = await response.json();
+            const accessToken = localStorage.getItem('access_token');
+            const userId = localStorage.getItem('user_id');
+            const url = `http://${config.ip}:8081/api/v1/requests/info?page=${page}&limit=${size}&userId=${userId}`;
+            try {
+                const result = await apiService.get(url, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                });
+                return result.data.content;
+            } catch (error) {
+                console.error('Error fetching page data:', error);
+                return [];
+            }
+        }
+
+        async function loadNextPage() {
+            console.log('Loading page:', currentPage);
+            if (isLoading || !hasMoreData) return;
+
+            isLoading = true;
+            document.getElementById('loadingIndicator').style.display = 'block';
+
+            const data = await fetchPageData(currentPage, pageSize);
+
+            if (!Array.isArray(data) || data.length === 0) {
+                hasMoreData = false;
+            } else {
+                populateTable(data);
+                currentPage++;
+            }
+
+            isLoading = false;
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
+        function populateTable(data) {
+            if (!Array.isArray(data)) {
+                console.error('Expected an array but received:', data);
+                return;
+            }
+            const tableBody = document.getElementById('requestsTable');
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.addEventListener('click', () => {
+                    window.open(`result.htm?requestID=${row.requestID}`, '_blank');
+                });
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td class="request-id" data-full-text="${row.requestID || 'N/A'}">
+                        ${row.requestID ? row.requestID.slice(0, 10) + '...' : 'N/A'}
+                    </td>
+                    <td><span class="status ${row.status.toLowerCase()}">${row.status}</span></td>
+                    <td>${new Date(row.updatedAt).toLocaleString() || 'N/A'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function handleScroll() {
+            const tableContainer = document.querySelector('.table-container');
+            const scrollPosition = tableContainer.scrollTop + tableContainer.clientHeight;
+            const scrollHeight = tableContainer.scrollHeight;
+
+            if (scrollHeight - scrollPosition < 50) {
+                loadNextPage();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadNextPage();
+        });
+
+        document.querySelector('.table-container').addEventListener('scroll', handleScroll);
+    </script>
+</body>
+
+</html>

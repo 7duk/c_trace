@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - File Analysis System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./service/utils.js"></script>
+    <script src="./service/apiService.js"></script>
+    <script src="./service/dialog.js"></script>
+    <style>
+        :root {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8f9fa;
+            --accent-color: #0d6efd;
+            --hover-color: #0b5ed7;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: var(--primary-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            width: 100%;
+            max-width: 400px;
+            margin: 1rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+
+        .btn-login {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-login:hover {
+            background: var(--hover-color);
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        /* Thêm style cho phần register */
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .register-link a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Login</h1>
+            <p>File Analysis System</p>
+        </div>
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-login">Login</button>
+            <div class="register-link">
+                <a href="register.htm">Don't have an account? Register here</a>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            console.log('username-->' + username + "|password" + password)
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const response = await fetch('./config/config.json');
+                const config = await response.json();
+                const loginResponse = await apiService.post(`http://${config.ip}:8081/api/v1/auth/login`,
+                    {
+                        username: username,
+                        password: password
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    },
+
+                );
+                if (loginResponse.status == 200) {
+                    const data = loginResponse.data.data;
+                    // Store user data and token in localStorage
+                    localStorage.setItem('username', username);
+                    setValueCookie('refreshToken', data.refreshToken, 30);
+                    localStorage.setItem('access_token', data.accessToken);
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('fullname', data.fullname);
+                    localStorage.setItem('mail', data.email);
+                    localStorage.setItem('user_id', data.userID);
+                    localStorage.setItem("created_at", data.createdAt);
+                    switchPage();
+
+                }
+            } catch (error) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'An error occurred. Please try again later.';
+                console.error('Login error:', error);
+            }
+        });
+
+        function switchPage() {
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                console.log('switch to index page.')
+                window.location.href = 'index.htm';
+            }
+        }
+
+        switchPage();
+
+    </script>
+</body>
+
+</html>

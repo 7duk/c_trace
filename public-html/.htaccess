@@ -1,0 +1,4 @@
+# Chuyển hướng tất cả các lỗi 404 tới trang lỗi tùy chỉnh
+ErrorDocument 404 /404.htm
+
+DirectoryIndex /index.htm

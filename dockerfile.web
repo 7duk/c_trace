@@ -1,0 +1,12 @@
+# Sử dụng image Apache chính thức
+FROM httpd:latest
+
+# Sao chép các file website vào thư mục gốc của Apache
+COPY ./public-html/ /usr/local/apache2/htdocs/
+
+# Sao chép file cấu hình Apache tùy chỉnh vào container (sử dụng nếu cần)
+COPY ./httpd.conf /usr/local/apache2/conf/httpd.conf
+
+# Expose port 80 để web có thể truy cập
+EXPOSE 80
+
