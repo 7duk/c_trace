@@ -12,6 +12,7 @@
 #include <sys/resource.h>
 #include <time.h>
 #include <stdarg.h>
+#include <magic.h>
 
 #define MAX_SYSCALLS 100
 #define PATH_MAX 4096
@@ -41,8 +42,24 @@ int allowed_syscalls[] = {
     SYS_prlimit64,       // 302
     SYS_munmap,          // 11
     SYS_getrandom,       // 318
+    SYS_stat,            // Lấy thông tin file
+    SYS_statfs,          // Lấy thông tin hệ thống file
+    SYS_readlink,        // Đọc liên kết symlink
 };
 int num_allowed_syscalls = sizeof(allowed_syscalls) / sizeof(int);
+
+const char *interpreters[][2] = {
+    {".py", "python3"},
+    {".js", "node"},
+    {".jar", "java -jar"},
+    {".sh", "bash"},
+    {".pdf", "evince"},
+    {".docx", "libreoffice"},
+    {".xlsx", "libreoffice"},
+    {".csv", "libreoffice"}
+};
+
+const int num_interpreters = sizeof(interpreters) / sizeof(interpreters[0]);
 
 enum LogLevel
 {
@@ -94,6 +111,72 @@ void get_executable_path(pid_t pid, char *buffer, size_t size)
         strncpy(buffer, "unknown", size - 1);
         buffer[size - 1] = '\0';
     }
+}
+
+char *determine_interpreter(const char *filename)
+{
+    magic_t magic_cookie;
+    const char *mime_type;
+    char *interpreter = NULL;
+
+    // Khởi tạo magic library
+    magic_cookie = magic_open(MAGIC_MIME_TYPE);
+    if (magic_cookie == NULL)
+    {
+        log_message(LOG_ERROR, "Failed to initialize magic library");
+        return NULL;
+    }
+
+    // Load magic database
+    if (magic_load(magic_cookie, NULL) != 0)
+    {
+        log_message(LOG_ERROR, "Failed to load magic library");
+        magic_close(magic_cookie);
+        return NULL;
+    }
+
+    // Lấy MIME type của file
+    mime_type = magic_file(magic_cookie, filename);
+    if (mime_type == NULL)
+    {
+        log_message(LOG_ERROR, "Failed to determine file type");
+        magic_close(magic_cookie);
+        return NULL;
+    }
+
+    // Kiểm tra phần mở rộng file
+    char *ext = strrchr(filename, '.');
+    if (ext)
+    {
+        for (int i = 0; i < num_interpreters; i++)
+        {
+            if (strcmp(ext, interpreters[i][0]) == 0)
+            {
+                interpreter = strdup(interpreters[i][1]);
+                break;
+            }
+        }
+    }
+
+    // Nếu không tìm thấy interpreter từ phần mở rộng, thử theo MIME type
+    if (interpreter == NULL)
+    {
+        if (strstr(mime_type, "python"))
+        {
+            interpreter = strdup("python3");
+        }
+        else if (strstr(mime_type, "javascript"))
+        {
+            interpreter = strdup("node");
+        }
+        else if (strstr(mime_type, "x-java-archive"))
+        {
+            interpreter = strdup("java -jar");
+        }
+    }
+
+    magic_close(magic_cookie);
+    return interpreter;
 }
 
 int is_syscall_allowed(long syscall)
@@ -260,6 +343,10 @@ void run(int argc, char *argv[])
         fprintf(stderr, "Usage: %s <program to run in sandbox>\n", argv[0]);
         exit(EXIT_FAILURE);
     }
+
+    // Xác định trình thông dịch
+    char *interpreter = determine_interpreter(argv[1]);
+
     log_message(LOG_INFO, "Starting sandbox for program: %s", argv[1]);
     pid_t parent_pid = getpid();
     pid_t child = fork();
@@ -276,11 +363,37 @@ void run(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
         set_resource_limits();
-        if (execv(argv[1], &argv[1]) == -1)
+        // if (execv(argv[1], &argv[1]) == -1)
+        // {
+        //     log_message(LOG_ERROR, "execv failed: %s", strerror(errno));
+        //     perror("execv");
+        //     exit(EXIT_FAILURE);
+        // }
+        // Nếu có trình thông dịch, sử dụng trình thông dịch
+        if (interpreter)
         {
-            log_message(LOG_ERROR, "execv failed: %s", strerror(errno));
-            perror("execv");
-            exit(EXIT_FAILURE);
+            char *args[4];
+            args[0] = interpreter;
+            args[1] = argv[1];
+            args[2] = NULL;
+
+            if (execvp(interpreter, args) == -1)
+            {
+                log_message(LOG_ERROR, "execvp failed: %s", strerror(errno));
+                perror("execvp");
+                free(interpreter);
+                exit(EXIT_FAILURE);
+            }
+        }
+        else
+        {
+            // Nếu không có trình thông dịch, thử thực thi trực tiếp
+            if (execv(argv[1], &argv[1]) == -1)
+            {
+                log_message(LOG_ERROR, "execv failed: %s", strerror(errno));
+                perror("execv");
+                exit(EXIT_FAILURE);
+            }
         }
     }
     else if (child > 0)
@@ -288,6 +401,8 @@ void run(int argc, char *argv[])
         // Parent process (sandbox)
         printf("Running '%s' in sandbox\n", argv[1]);
         log_message(LOG_INFO, "Running '%s' in sandbox", argv[1]);
+        if (interpreter)
+            free(interpreter);
         run_sandbox(child, parent_pid);
     }
     else
@@ -299,6 +414,6 @@ void run(int argc, char *argv[])
 }
 int main(int argc, char *argv[])
 {
-    run(argc,argv);
+    run(argc, argv);
     return 0;
 }
