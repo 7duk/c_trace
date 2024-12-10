@@ -13,8 +13,9 @@
 #include <time.h>
 #include <stdarg.h>
 #include <magic.h>
+#include <libgen.h>
 
-#define MAX_SYSCALLS 100
+#define MAX_SYSCALLS 1000
 #define PATH_MAX 4096
 #define LOG_FILE "sandbox.log"
 
@@ -54,12 +55,25 @@ const char *interpreters[][2] = {
     {".jar", "java -jar"},
     {".sh", "bash"},
     {".pdf", "evince"},
+    {".doc", "libreoffice"},
     {".docx", "libreoffice"},
-    {".xlsx", "libreoffice"},
-    {".csv", "libreoffice"}
+    {".xlsx", "libreoffice --calc"},
+    {".csv", "libreoffice --calc"},
+    {".exe", "wine"},
+
 };
 
 const int num_interpreters = sizeof(interpreters) / sizeof(interpreters[0]);
+
+struct SyscallLog
+{
+    long syscall_number;
+    long return_value;
+};
+
+// Biến toàn cục để lưu trữ các syscall
+struct SyscallLog syscall_logs[MAX_SYSCALLS];
+int syscall_log_count = 0;
 
 enum LogLevel
 {
@@ -113,7 +127,7 @@ void get_executable_path(pid_t pid, char *buffer, size_t size)
     }
 }
 
-char *determine_interpreter(const char *filename)
+char *determine_interpreter(const char *filename, const char *log_file)
 {
     magic_t magic_cookie;
     const char *mime_type;
@@ -123,14 +137,14 @@ char *determine_interpreter(const char *filename)
     magic_cookie = magic_open(MAGIC_MIME_TYPE);
     if (magic_cookie == NULL)
     {
-        log_message(LOG_ERROR, "Failed to initialize magic library");
+        log_message(log_file,LOG_ERROR, "Failed to initialize magic library");
         return NULL;
     }
 
     // Load magic database
     if (magic_load(magic_cookie, NULL) != 0)
     {
-        log_message(LOG_ERROR, "Failed to load magic library");
+        log_message(log_file,LOG_ERROR, "Failed to load magic library");
         magic_close(magic_cookie);
         return NULL;
     }
@@ -139,7 +153,7 @@ char *determine_interpreter(const char *filename)
     mime_type = magic_file(magic_cookie, filename);
     if (mime_type == NULL)
     {
-        log_message(LOG_ERROR, "Failed to determine file type");
+        log_message(log_file,LOG_ERROR, "Failed to determine file type");
         magic_close(magic_cookie);
         return NULL;
     }
@@ -191,11 +205,42 @@ int is_syscall_allowed(long syscall)
     return 0;
 }
 
-// New function for logging
-void log_message(enum LogLevel level, const char *format, ...)
+void generate_log_file_name(const char *input_file, char *log_file, size_t size) {
+    char *base = basename((char *)input_file); // Lấy tên file (không có đường dẫn)
+    snprintf(log_file, size, "%s.log", base);  // Gắn đuôi .log vào tên file
+}
+
+// Sửa đổi hàm log_message để hỗ trợ ghi log syscall
+void log_syscall_summary(const char *filename, const char *log_file)
 {
-    FILE *log_file = fopen(LOG_FILE, "a");
-    if (log_file == NULL)
+    FILE *file = fopen(log_file, "a");
+    if (file == NULL)
+    {
+        perror("Failed to open log file for syscall summary");
+        return;
+    }
+
+    // Ghi danh sách các syscall
+    fprintf(file, "Syscalls for %s: [", filename);
+    for (int i = 0; i < syscall_log_count; i++)
+    {
+        fprintf(file, "%ld%s",
+                syscall_logs[i].syscall_number,
+                (i < syscall_log_count - 1) ? "," : "");
+    }
+    fprintf(file, "]\n");
+
+    fclose(file);
+
+    // Reset log count
+    syscall_log_count = 0;
+}
+
+// New function for logging
+void log_message(const char *log_file,enum LogLevel level, const char *format, ...)
+{
+    FILE *file = fopen(log_file, "a");
+    if (file == NULL)
     {
         perror("Failed to open log file");
         return;
@@ -206,28 +251,28 @@ void log_message(enum LogLevel level, const char *format, ...)
     char *date = ctime(&now);
     date[strlen(date) - 1] = '\0'; // Remove newline
 
-    fprintf(log_file, "[%s] ", date);
+    fprintf(file, "[%s] ", date);
 
     switch (level)
     {
     case LOG_INFO:
-        fprintf(log_file, "[INFO] ");
+        fprintf(file, "[INFO] ");
         break;
     case LOG_WARNING:
-        fprintf(log_file, "[WARNING] ");
+        fprintf(file, "[WARNING] ");
         break;
     case LOG_ERROR:
-        fprintf(log_file, "[ERROR] ");
+        fprintf(file, "[ERROR] ");
         break;
     }
 
     va_list args;
     va_start(args, format);
-    vfprintf(log_file, format, args);
+    vfprintf(file, format, args);
     va_end(args);
 
-    fprintf(log_file, "\n");
-    fclose(log_file);
+    fprintf(file, "\n");
+    fclose(file);
 }
 
 void monitor_resources(pid_t pid, struct ResourceUsage *usage)
@@ -259,7 +304,7 @@ void set_resource_limits()
     }
 }
 
-void run_sandbox(pid_t child, pid_t parent_pid)
+void run_sandbox(pid_t child, pid_t parent_pid, const char *filename, const char *log_file )
 {
     int status;
     struct user_regs_struct regs;
@@ -271,20 +316,21 @@ void run_sandbox(pid_t child, pid_t parent_pid)
         if (waitpid(child, &status, 0) == -1)
         {
             perror("waitpid");
-            log_message(LOG_ERROR, "waitpid failed: %s", strerror(errno));
+            log_message(log_file,LOG_ERROR, "waitpid failed: %s", strerror(errno));
             break;
         }
 
         if (WIFEXITED(status))
         {
             printf("Child exited with status %d\n", WEXITSTATUS(status));
-            log_message(LOG_INFO, "Child exited with status %d", WEXITSTATUS(status));
+            log_message(log_file,LOG_INFO, "Child exited with status %d", WEXITSTATUS(status));
+            log_syscall_summary(filename,log_file);
             break;
         }
         else if (WIFSIGNALED(status))
         {
             printf("Child killed by signal %d\n", WTERMSIG(status));
-            log_message(LOG_INFO, "Child killed by signal %d", WTERMSIG(status));
+            log_message(log_file,LOG_INFO, "Child killed by signal %d", WTERMSIG(status));
             break;
         }
         else if (WIFSTOPPED(status))
@@ -292,19 +338,28 @@ void run_sandbox(pid_t child, pid_t parent_pid)
             if (ptrace(PTRACE_GETREGS, child, NULL, &regs) == -1)
             {
                 perror("ptrace GETREGS");
-                log_message(LOG_ERROR, "ptrace GETREGS failed: %s", strerror(errno));
+                log_message(log_file,LOG_ERROR, "ptrace GETREGS failed: %s", strerror(errno));
                 continue;
             }
 
             if (in_syscall == 0)
             {
                 printf("Syscall number: %lld\n", regs.orig_rax);
-                log_message(LOG_INFO, "Syscall number: %lld", regs.orig_rax);
+                log_message(log_file,LOG_INFO, "Syscall number: %lld", regs.orig_rax);
+
+                // Lưu syscall vào mảng log
+                if (syscall_log_count < MAX_SYSCALLS)
+                {
+                    syscall_logs[syscall_log_count].syscall_number = regs.orig_rax;
+                    syscall_logs[syscall_log_count].return_value = 0; // Giá trị ban đầu
+                    syscall_log_count++;
+                }
+
                 if (!is_syscall_allowed(regs.orig_rax) && child != parent_pid)
                 {
                     printf("Blocked syscall: %lld\n", regs.orig_rax);
                     printf("Position: %lld\n", regs.rip);
-                    log_message(LOG_WARNING, "Blocked syscall: %lld at position: %lld", regs.orig_rax, regs.rip);
+                    log_message(log_file,LOG_WARNING, "Blocked syscall: %lld at position: %lld", regs.orig_rax, regs.rip);
 
                     char executable[PATH_MAX];
                     get_executable_path(child, executable, sizeof(executable));
@@ -314,7 +369,7 @@ void run_sandbox(pid_t child, pid_t parent_pid)
                     if (ptrace(PTRACE_SETREGS, child, NULL, &regs) == -1)
                     {
                         perror("ptrace SETREGS");
-                        log_message(LOG_ERROR, "ptrace SETREGS failed: %s", strerror(errno));
+                        log_message(log_file,LOG_ERROR, "ptrace SETREGS failed: %s", strerror(errno));
                     }
                 }
                 in_syscall = 1;
@@ -322,14 +377,19 @@ void run_sandbox(pid_t child, pid_t parent_pid)
             else
             {
                 printf("Syscall return value: %lld\n", regs.rax);
-                log_message(LOG_INFO, "Syscall return value: %lld", regs.rax);
+                log_message(log_file,LOG_INFO, "Syscall return value: %lld", regs.rax);
+                // Cập nhật giá trị trả về của syscall cuối cùng
+                if (syscall_log_count > 0)
+                {
+                    syscall_logs[syscall_log_count - 1].return_value = regs.rax;
+                }
                 in_syscall = 0;
             }
             monitor_resources(child, &usage);
             if (ptrace(PTRACE_SYSCALL, child, NULL, NULL) == -1)
             {
                 perror("ptrace SYSCALL");
-                log_message(LOG_ERROR, "ptrace SYSCALL failed: %s", strerror(errno));
+                log_message(log_file,LOG_ERROR, "ptrace SYSCALL failed: %s", strerror(errno));
                 break;
             }
         }
@@ -344,10 +404,13 @@ void run(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    // Xác định trình thông dịch
-    char *interpreter = determine_interpreter(argv[1]);
+    char log_file[PATH_MAX];
+    generate_log_file_name(argv[1], log_file, sizeof(log_file));
 
-    log_message(LOG_INFO, "Starting sandbox for program: %s", argv[1]);
+    // Xác định trình thông dịch
+    char *interpreter = determine_interpreter(argv[1],log_file);
+
+    log_message(log_file,LOG_INFO, "Starting sandbox for program: %s", argv[1]);
     pid_t parent_pid = getpid();
     pid_t child = fork();
 
@@ -355,21 +418,15 @@ void run(int argc, char *argv[])
     {
         // Child process
         printf("Child process created!\n");
-        log_message(LOG_INFO, "Child process created");
+        log_message(log_file,LOG_INFO, "Child process created");
         if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) == -1)
         {
             perror("ptrace TRACEME");
-            log_message(LOG_ERROR, "ptrace TRACEME failed: %s", strerror(errno));
+            log_message(log_file,LOG_ERROR, "ptrace TRACEME failed: %s", strerror(errno));
             exit(EXIT_FAILURE);
         }
         set_resource_limits();
-        // if (execv(argv[1], &argv[1]) == -1)
-        // {
-        //     log_message(LOG_ERROR, "execv failed: %s", strerror(errno));
-        //     perror("execv");
-        //     exit(EXIT_FAILURE);
-        // }
-        // Nếu có trình thông dịch, sử dụng trình thông dịch
+
         if (interpreter)
         {
             char *args[4];
@@ -379,7 +436,7 @@ void run(int argc, char *argv[])
 
             if (execvp(interpreter, args) == -1)
             {
-                log_message(LOG_ERROR, "execvp failed: %s", strerror(errno));
+                log_message(log_file,LOG_ERROR, "execvp failed: %s", strerror(errno));
                 perror("execvp");
                 free(interpreter);
                 exit(EXIT_FAILURE);
@@ -390,7 +447,7 @@ void run(int argc, char *argv[])
             // Nếu không có trình thông dịch, thử thực thi trực tiếp
             if (execv(argv[1], &argv[1]) == -1)
             {
-                log_message(LOG_ERROR, "execv failed: %s", strerror(errno));
+                log_message(log_file,LOG_ERROR, "execv failed: %s", strerror(errno));
                 perror("execv");
                 exit(EXIT_FAILURE);
             }
@@ -400,15 +457,15 @@ void run(int argc, char *argv[])
     {
         // Parent process (sandbox)
         printf("Running '%s' in sandbox\n", argv[1]);
-        log_message(LOG_INFO, "Running '%s' in sandbox", argv[1]);
+        log_message(log_file,LOG_INFO, "Running '%s' in sandbox", argv[1]);
         if (interpreter)
             free(interpreter);
-        run_sandbox(child, parent_pid);
+        run_sandbox(child, parent_pid, argv[1], log_file);
     }
     else
     {
         perror("fork");
-        log_message(LOG_ERROR, "fork failed: %s", strerror(errno));
+        log_message(log_file,LOG_ERROR, "fork failed: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
 }
