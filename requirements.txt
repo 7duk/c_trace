@@ -1,4 +1,10 @@
-tensorflow==2.5.0
-numpy==1.19.5
+numpy//
+pandas
+scikit-learn//
+tensorflow-cpu
 keras
-scikit-learn
+pytourch//
+
+2024-12-14 09:31
+
+docker build -t get_syscall:1.0
