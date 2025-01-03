@@ -25,17 +25,18 @@ WORKDIR /app
 # Copy the source code 'sandbox.c' and script 'entrypoint.sh' into the /app directory
 # COPY test /app/test
 # COPY sandbox_basic.c /app/sandbox_basic.c
-COPY sandbox /app/sandbox
+COPY sandbox.so /app/sandbox.so
+COPY runner.py /app/runner.py
 
 
 # Compile the C program using libmagic
 # RUN gcc -o sandbox sandbox_basic.c -lmagic
 
 # Ensure that the binary files are executable
-RUN chmod +x sandbox
+# RUN chmod +x sandbox
 
 # Set the working directory to /app (optional, to simplify paths)
 WORKDIR /app
 
 # Set the entrypoint to the custom script
-ENTRYPOINT ["./sandbox"]
+ENTRYPOINT ["python3","runner.py"]
