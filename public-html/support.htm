@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support System</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./service/apiService.js"></script>
+    <script src="./service/dialog.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .support-header {
+            background: #2196F3;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .support-content {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        textarea {
+            min-height: 250px;
+            resize: vertical;
+        }
+
+        button {
+            background: #2196F3;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100px;
+        }
+
+        .button-submit:hover {
+            background: #1976D2;
+        }
+
+        .ticket-list {
+            margin-top: 30px;
+        }
+
+        .ticket {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .ticket-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status-new {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .status-in-progress {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-resolved {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-controls :hover {
+            color: #0b5ed7;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #0d6efd;
+            ;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: color 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="btn-back" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>Support Request</h1>
+            </div>
+        </div>
+
+        <div class="support-content">
+            <form class="ticket-form" id="supportForm">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Email</label>
+                    <input type="text" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Subscription</label>
+                    <textarea id="description" required></textarea>
+                </div>
+
+                <button type="submit" class="button-submit">Submit</button>
+            </form>
+
+            <div class="ticket-list" id="ticketList">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('supportForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const ticket = {
+                id: Date.now(),
+                title: document.getElementById('title').value,
+                email: document.getElementById('email').value,
+                description: document.getElementById('description').value,
+                status: 'new',
+                createdAt: new Date().toLocaleString(),
+            };
+            callTicketApi(ticket);
+            this.reset();
+        });
+
+        async function callTicketApi(ticket) {
+            try {
+                const response = await fetch('./config/config.json');
+                const config = await response.json();
+                const requestUrl = `http://${config.ip}:8081/api/v1/supports`;
+
+                const { createdAt, status, id, ...newTicket } = ticket;
+                console.log(newTicket);
+                const result = await apiService.post(requestUrl, newTicket);
+                if (result.data.status == 201) {
+                    enhancedDialog.showMessage({
+                        title: "Message",
+                        message: "Support is acepted successfully!",
+                    });
+                    addTicketToList(ticket);
+                }
+
+            } catch (error) {
+                console.log(error);
+                enhancedDialog.showMessage({
+                    title: "Message",
+                    message: error.response.data,
+                });
+            }
+        }
+
+        function addTicketToList(ticket) {
+            const ticketList = document.getElementById('ticketList');
+
+            const ticketElement = document.createElement('div');
+            ticketElement.className = 'ticket';
+            ticketElement.innerHTML = `
+                <div class="ticket-header">
+                    <h3>${ticket.title}</h3>
+                    <span class="ticket-status status-${ticket.status}">${getStatusText(ticket.status)}</span>
+                </div>
+                <div class="ticket-info">
+                    <p><strong>Email:</strong> ${ticket.email}</p>
+                    <p><strong>Created at:</strong> ${ticket.createdAt}</p>
+                    <p><strong>Subscription:</strong> ${ticket.description}</p>
+                </div>
+            `;
+
+            ticketList.insertBefore(ticketElement, ticketList.firstChild);
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'new': 'Mới',
+                'in-progress': 'Đang xử lý',
+                'resolved': 'Đã giải quyết'
+            };
+            return statusMap[status] || status;
+        }
+
+        function goBack() {
+            window.location.href = './index.htm';
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkEmailInput = setInterval(function () {
+                console.log('check email input');
+                const emailInput = document.getElementById('email');
+                if (emailInput) {
+                    const email = localStorage.getItem('mail');
+                    if (email) {
+                        console.log(email);
+                        emailInput.value = email;
+                    }
+                    clearInterval(checkEmailInput);
+                }
+            }, 100);
+        });
+
+
+    </script>
+</body>
+
+</html>

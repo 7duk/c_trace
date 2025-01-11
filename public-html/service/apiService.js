@@ -93,7 +93,7 @@ axiosInstance.interceptors.request.use(
                     config.headers.Authorization = `Bearer ${newToken}`;
                 } else {
                     // Redirect to login if refresh failed
-                    window.location.href = '/login.htm';
+                    window.location.href = './login.htm';
                     return Promise.reject('Session expired');
                 }
             } else {
@@ -144,7 +144,7 @@ axiosInstance.interceptors.response.use(
                         title: "Message",
                         message: error.response.data
                     });
-                    window.location.href = '/login.htm';
+                    window.location.href = './login.htm';
                     break;
 
                 case 403:

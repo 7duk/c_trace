@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./service/dialog.js"></script>
+    <title>Enhanced Request Monitor</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --success-color: #48bb78;
+            --warning-color: #ecc94b;
+            --error-color: #f56565;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background-color: #43a047;
+            transform: translateY(-1px);
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-completed {
+            background-color: var(--success-color);
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+        }
+
+        .status-error {
+            background-color: var(--error-color);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Modify the analysis-container to enable proper scrolling context */
+        .analysis-container {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            max-height: 400px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Update base prediction class */
+        .prediction {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        /* Style for safe prediction */
+        .prediction.safe {
+            background-color: rgba(72, 187, 120, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(72, 187, 120, 0.2);
+        }
+
+        /* Style for dangerous prediction */
+        .prediction.dangerous {
+            background-color: rgba(245, 101, 101, 0.1);
+            color: var(--error-color);
+            border: 1px solid rgba(245, 101, 101, 0.2);
+        }
+
+        /* Hover effect */
+        .prediction:hover {
+            transform: translateY(-1px);
+            transition: transform 0.2s ease;
+        }
+
+        /* Add icon before text */
+        .prediction::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .prediction.safe::before {
+            background-color: var(--success-color);
+        }
+
+        .prediction.dangerous::before {
+            background-color: var(--error-color);
+        }
+
+        /* Modify the syscall-grid to enable scrolling */
+        .syscall-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+            overflow-y: auto;
+            max-height: 300px;
+            padding-right: 8px;
+            /* Add padding for scrollbar */
+
+            /* Firefox scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: #4a5568 #2d3748;
+        }
+
+        /* Chrome, Safari, and Edge scrollbar styling */
+        .syscall-grid::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .syscall-grid::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 4px;
+        }
+
+        .syscall-grid::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+            border: 2px solid #2d3748;
+        }
+
+        .syscall-grid::-webkit-scrollbar-thumb:hover {
+            background-color: #718096;
+        }
+
+        .syscall-grid::-webkit-scrollbar-corner {
+            background: #2d3748;
+        }
+
+        /* Update syscall-item to ensure consistent appearance */
+        .syscall-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
+            /* Add minimum height for consistency */
+        }
+
+        /* Move total-syscalls outside of scroll area */
+        #total-syscalls {
+            margin-top: 1rem;
+            flex-shrink: 0;
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+        }
+
+        .syscall-name {
+            font-family: 'Consolas', monospace;
+            color: var(--text-secondary);
+        }
+
+        .syscall-count {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ptrace-output {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-family: 'Consolas', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .timestamp {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .request-id {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            stroke: currentColor;
+        }
+
+        .ptrace-output {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-family: 'Consolas', monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+
+            /* Thêm các thuộc tính cho scrolling */
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+
+            /* Tùy chỉnh thanh cuộn cho Firefox */
+            scrollbar-width: thin;
+            scrollbar-color: #4a5568 #2d3748;
+        }
+
+        /* Tùy chỉnh thanh cuộn cho Chrome, Safari, và Edge */
+        .ptrace-output::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+            /* Cho thanh cuộn ngang */
+        }
+
+        .ptrace-output::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 4px;
+        }
+
+        .ptrace-output::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+            border: 2px solid #2d3748;
+        }
+
+        .ptrace-output::-webkit-scrollbar-thumb:hover {
+            background-color: #718096;
+        }
+
+        /* Góc giao nhau của thanh cuộn */
+        .ptrace-output::-webkit-scrollbar-corner {
+            background: #2d3748;
+        }
+
+        /* Đảm bảo nội dung không bị che bởi thanh cuộn */
+        .ptrace-content {
+            padding-right: 8px;
+        }
+
+        /* Style cho dòng trong ptrace output */
+        .ptrace-line {
+            padding: 2px 0;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .ptrace-line:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Request Monitor</h1>
+            <button class="refresh-btn" onclick="updateStatus()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15">
+                    </path>
+                </svg>
+                Refresh
+            </button>
+        </div>
+
+        <div class="card status-card">
+            <div class="status-indicator">
+                <div id="status-dot" class="status-dot status-completed"></div>
+                <span id="status-text">COMPLETED</span>
+            </div>
+            <div>
+                <div id="request-id" class="request-id"></div>
+                <div id="timestamp" class="timestamp"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                AI Analysis
+            </h2>
+            <div class="analysis-container">
+                <div id="prediction" class="prediction"></div>
+                <div id="syscall-grid" class="syscall-grid"></div>
+                <div id="total-syscalls" class="syscall-item"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 17l6-6-6-6"></path>
+                    <path d="M12 19h8"></path>
+                </svg>
+                Ptrace Output
+            </h2>
+            <div id="ptrace-output" class="ptrace-output"></div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestID = urlParams.get('requestID');
+
+        function updateStatus() {
+            window.location.reload();
+        }
+
+        function updateUI(data) {
+            if (!data) return;
+
+            // Update status
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            statusDot.className = `status-dot status-${data.responseStatus.toLowerCase()}`;
+            statusText.textContent = data.responseStatus;
+
+            // Update request info
+            document.getElementById('request-id').textContent = `Request ID: ${data.requestID}`;
+            document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+
+            // Update prediction
+            const prediction = document.getElementById('prediction');
+            prediction.textContent = data.predict?.prediction;
+            prediction.className = `prediction ${data.predict?.prediction.toLowerCase()}`;
+
+            // Update syscall grid
+            const syscallGrid = document.getElementById('syscall-grid');
+            syscallGrid.innerHTML = '';
+            if (data?.predict?.syscallFrequencies && typeof data.predict.syscallFrequencies === 'object') {
+                Object.entries(data.predict.syscallFrequencies).forEach(([syscall, count]) => {
+                    const item = document.createElement('div');
+                    item.className = 'syscall-item';
+                    item.innerHTML = `
+                            <span class="syscall-name">${syscall}</span>
+                            <span class="syscall-count">${count} calls</span>
+                    `;
+                    syscallGrid.appendChild(item);
+                });
+            } else {
+                console.warn('syscallFrequencies is not defined or not an object:', data?.predict?.syscallFrequencies);
+            }
+
+            // Update total syscalls
+            document.getElementById('total-syscalls').innerHTML = `
+                <span class="syscall-name">Total Syscalls</span>
+                <span class="syscall-count">${data.predict!= null ? data.predict?.totalSyscalls:0}</span>
+            `;
+
+            // Update ptrace output
+            const ptraceOutput = document.getElementById('ptrace-output');
+            ptraceOutput.innerHTML = data.ptraceOutput
+                .map(line => `<div class="ptrace-line">${line}</div>`)
+                .join('');
+        }
+
+        // WebSocket connection
+        const wsUrl = `ws://localhost:8081/handler?requestID=${requestID}`;
+        const socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => console.log("WebSocket connected");
+
+        socket.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                updateUI(data);
+            } catch (error) {
+                console.error("Failed to parse WebSocket message:", error);
+                enhancedDialog.showConfirm({
+                    title: "Message",
+                    message: "Failed to view result data. Please back to home !",
+                    onConfirm: () => {
+                        window.location.href = "./login.htm";
+                    }
+                });
+            }
+        };
+
+        socket.onclose = () => console.log("WebSocket disconnected");
+        socket.onerror = (error) => console.error("WebSocket error:", error);
+    </script>
+</body>
+
+</html>

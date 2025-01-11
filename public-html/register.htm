@@ -3,6 +3,7 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="./service/apiService.js"></script>
     <script src="./service/dialog.js"></script>
     <style>
@@ -394,7 +395,7 @@
 
     <div class="verification-dialog" id="verificationDialog">
         <div class="verification-content">
-            <button class="close-btn" onclick="closeDialog()">×</button>
+            <button class="close-btn" onclick="closeDialog()"><i class="fa-solid fa-xmark"></i></button>
             <h3 class="verification-title">Verify Your Account</h3>
             <p class="verification-message">Please enter the 6-digit code sent to your email</p>
             <div class="code-inputs">
@@ -542,7 +543,7 @@
                     localStorage.removeItem('temp_mail');
                     document.getElementById('verificationDialog').style.display = 'none';
                     showModal(result.data.message, true);
-                    setTimeout(goToLogin, 2000);
+                    setTimeout(goToLogin, 1000);
                 }
             } catch (error) {
                 var elements = document.getElementsByClassName('code-input');
@@ -598,7 +599,7 @@
 
         const goToLogin = () => {
             // Redirect to login page
-            window.location.href = 'login.htm';
+            window.location.href = './login.htm';
             console.log('Redirecting to login page...');
         };
 

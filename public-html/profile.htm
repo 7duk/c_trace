@@ -340,7 +340,7 @@
         function checkAuth() {
             const token = localStorage.getItem('access_token');
             if (!token) {
-                window.location.href = 'login.htm';
+                window.location.href = './login.htm';
             }
             loadUserInfo();
         }
@@ -371,7 +371,7 @@
         }
 
         function goBack() {
-            window.location.href = 'index.htm';
+            window.location.href = './index.htm';
         }
 
         function toggleDropdown() {
@@ -455,7 +455,7 @@
         }
         function changePassword() {
             const userId = localStorage.getItem('user_id');
-            window.location.href = 'change-password.htm?userId=' + userId;
+            window.location.href = './change-password.htm?userId=' + userId;
         }
 
         document.addEventListener('DOMContentLoaded', checkAuth);

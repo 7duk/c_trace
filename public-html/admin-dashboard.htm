@@ -789,9 +789,8 @@
                 <h1>Dashboard</h1>
             </div>
             <div class="user-controls">
-                <div class="btn-icon" title="Username">
+                <div class="btn-icon" title="User Info" onclick="handleProfile()">
                     <i class="fa-solid fa-user"></i>
-                    <span class="username" id="currentUser" onclick="handleProfile()"></span>
                 </div>
                 <button class="btn-logout" onclick="handleLogout()">Logout</button>
             </div>
@@ -901,17 +900,14 @@
         // let modalScrollHandler = null;
         let hasMoreRequests = true;
         function handleProfile() {
-            window.location.href = 'profile.htm';
+            window.location.href = './profile.htm';
         }
         function checkAuth() {
             const token = localStorage.getItem('access_token');
             const userRole = localStorage.getItem('role');
             if (!token) {
-                window.location.href = 'index.htm';
+                window.location.href = './index.htm';
             }
-
-            const fullname = localStorage.getItem('fullname');
-            document.getElementById('currentUser').textContent = fullname;
         }
 
         async function handleLogout() {
@@ -940,7 +936,7 @@
         }
 
         function goBack() {
-            window.location.href = 'index.htm';
+            window.location.href = './index.htm';
         }
 
         document.addEventListener('DOMContentLoaded', checkAuth);
@@ -1397,26 +1393,27 @@
             </div>
             <div class="info-item">
                 <div class="info-label">Account Status</div>
-                <div class="info-value" data-status="${userInfo.activeFlg=='1'}">
-                    ${userInfo.activeFlg=='1' ? 'Active' : 'Inactive'}
+                <div class="info-value" data-status="${userInfo.activeFlg == '1'}">
+                    ${userInfo.activeFlg == '1' ? 'Active' : 'Inactive'}
                 </div>
-                <i 
-                    class="status-icon ${userInfo.activeFlg == '1' ? 'fas fa-toggle-on' : 'fas fa-toggle-off'}" 
-                    onclick="toggleAccountStatus('${userInfo.userID}', ${userInfo.activeFlg})"
-                    title="${userInfo.activeFlg =='1' ? 'Disable Account' : 'Enable Account'}">
-                </i>
+
             </div>
 
             <div class="info-item">
-                <div class="info-label">Delete Status</div>
+                <div class="info-label">User Status</div>
                 <div class="info-value" data-status="${userInfo.deleteFlg === '0'}">
                     ${userInfo.deleteFlg === '1' ? 'Deleted' : 'Available'}
                 </div>
+                 <i 
+                    class="status-icon ${userInfo.deleteFlg == '1' ? 'fas fa-toggle-on' : 'fas fa-toggle-off'}" 
+                    onclick="toggleAccountStatus('${userInfo.userID}', ${userInfo.deleteFlg})"
+                    title="${userInfo.deleteFlg == '0' ? 'Disable Account' : 'Enable Account'}">
+                </i>
             </div>
             <div class="info-item">
                 <div class="info-label">Created At</div>
                 <div class="info-value">
-                    ${new Date(userInfo.createDt).toLocaleString()}
+                    ${new Date(userInfo.createDt).toLocaleString()}X
                 </div>
             </div>
             <div class="info-item">
@@ -1454,7 +1451,7 @@
         async function toggleAccountStatus(userId, currentStatus) {
             console.log('Toggling account status for user:', userId);
             console.log('Current Status:', currentStatus);
-            const newStatus = !currentStatus;
+            const newStatus = currentStatus;
 
             enhancedDialog.showConfirm({
                 title: newStatus ? 'Enable Account' : 'Disable Account',
@@ -1478,20 +1475,20 @@
 
                         if (result.data.status === '200') {
                             enhancedDialog.showMessage({
-                                title:'Message',
+                                title: 'Message',
                                 message: result.data.message
                             })
                             // Update the UI without reloading
                             const statusIcon = document.querySelector(`[onclick="toggleAccountStatus('${userId}', ${currentStatus})"]`);
                             const statusValue = statusIcon.previousElementSibling;
 
-                            statusIcon.classList.remove(newStatus ? 'fa-toggle-off' : 'fa-toggle-on');
-                            statusIcon.classList.add(newStatus ? 'fa-toggle-on' : 'fa-toggle-off');
-                            statusValue.textContent = newStatus ? 'Active' : 'Inactive';
+                            statusIcon.classList.remove(!newStatus ? 'fa-toggle-off' : 'fa-toggle-on');
+                            statusIcon.classList.add(!newStatus ? 'fa-toggle-on' : 'fa-toggle-off');
+                            statusValue.textContent = !newStatus ? 'Deleted' : 'Available';
                             statusValue.setAttribute('data-status', newStatus);
 
                             // Update the click handler
-                            statusIcon.setAttribute('onclick', `toggleAccountStatus('${userId}', ${newStatus})`);
+                            statusIcon.setAttribute('onclick', `toggleAccountStatus('${userId}', ${!newStatus})`);
                         } else {
                             throw new Error('Failed to update account status');
                         }

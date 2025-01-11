@@ -280,7 +280,8 @@
       color: var(--text-secondary);
     } */
 
-    .btn-icon {
+    .btn-icon,
+    .btn-icon-support {
       background: none;
       border: none;
       color: var(--accent-color);
@@ -290,11 +291,13 @@
       transition: color 0.2s;
     }
 
-    .btn-icon:hover {
+    .btn-icon:hover,
+    .btn-icon-support:hover {
       color: var(--hover-color);
     }
 
-    .btn-icon.disabled {
+    .btn-icon.disabled,
+    .btn-icon-support.disabled {
       color: var(--text-secondary);
       cursor: not-allowed;
       opacity: 0.5;
@@ -376,13 +379,21 @@
       <div class="header-controls">
         <h1>File Analysis System</h1>
         <div class="user-controls">
-          <div class="btn-icon" title="Username" onclick="handleProfile()">
-            <i class="fa-solid fa-user"></i>
-            <span class="username" id="currentUser"></span>
-          </div>
+          <button class="btn-icon" id="syscallViewer" title="Syscall Viewer">
+            <i class="fa-solid fa-microchip"></i>
+            <span>Syscall</span>
+          </button>
           <button class="btn-icon" id="dashboardBtn" title="Dashboard">
             <i class="fas fa-chart-line"></i>
             <span>Dashboard</span>
+          </button>
+          <div class="btn-icon" title="User Info" onclick="handleProfile()">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+          </div>
+          <button class="btn-icon-support" id="supportBtn" title="Support">
+            <i class="fas fa-headset"></i>
+            <span>Support</span>
           </button>
           <button id="btnHandle" class="btn-logout" onclick="handleLogout()">Logout</button>
         </div>
@@ -391,11 +402,6 @@
     </header>
 
     <main class="analysis-panel">
-      <!-- <div class="command-section">
-        <label class="command-label" for="command_text">Parameters</label>
-        <input type="text" id="command_text" class="command-input" placeholder="Enter your parameters" />
-      </div> -->
-
       <div class="drop-zone" id="drop_box">
         <i class="fas fa-cloud-upload-alt upload-icon"></i>
         <h4>Drag and drop your file here or click to browse</h4>
@@ -458,7 +464,6 @@
   </div>
 
   <script>
-
     function checkAuth() {
       const token = localStorage.getItem('access_token');
       if (!token) {
@@ -466,12 +471,22 @@
         return true;
       }
       return false;
-
-
     }
 
     function loadData() {
       // Update UI with username
+      const role = localStorage.getItem('role');
+      console.log(role);
+      if (role == 'ADMIN') {
+        document.getElementById('syscallViewer').style.visibility = 'hidden';
+        document.getElementById('supportBtn').addEventListener('click', function () {
+          window.location.href = "./support-management.htm";
+        });
+      } else {
+        document.getElementById('supportBtn').addEventListener('click', function () {
+          window.location.href = "./support.htm";
+        });
+      }
       const token = localStorage.getItem('access_token');
       if (!token) {
         const btnHandle = document.getElementById('btnHandle');
@@ -488,29 +503,33 @@
 
 
       }
-      const fullname = localStorage.getItem('fullname');
-      document.getElementById('currentUser').textContent = fullname;
 
       // Configure dashboard button based on role
       const dashboardBtn = document.getElementById('dashboardBtn');
       dashboardBtn.addEventListener('click', () => {
         const role = localStorage.getItem('role');
         if (role === 'ADMIN') {
-          window.location.href = 'admin-dashboard.htm';
+          window.location.href = './admin-dashboard.htm';
         } else {
-          window.location.href = 'user-dashboard.htm';
+          window.location.href = './user-dashboard.htm';
         }
       });
     }
 
     function redirectToLogin() {
-      window.location.href = 'login.htm';
+      window.location.href = './login.htm';
     }
 
     document.addEventListener('DOMContentLoaded', loadData);
 
+
+    const syscallViewer = document.getElementById('syscallViewer');
+    console.log(syscallViewer);
+    syscallViewer.onclick = function () {
+      window.location.href = "./syscall.htm"
+    };
     function handleProfile() {
-      window.location.href = 'profile.htm';
+      window.location.href = './profile.htm';
     }
     async function handleLogout() {
       const userId = localStorage.getItem('user_id');
@@ -720,6 +739,10 @@
         dialog.close();
       }
     });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   checkAuth();
+    // });
   </script>
 </body>
 

@@ -128,6 +128,73 @@
         .register-link a:hover {
             text-decoration: underline;
         }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+
+        .forgot-link a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .dialog-content {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .dialog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-submit {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--hover-color);
+        }
     </style>
 </head>
 
@@ -147,14 +214,96 @@
                 <input type="password" id="password" name="password" required>
             </div>
             <button type="submit" class="btn-login">Login</button>
+            <div class="forgot-link">
+                <a>Forgot password?</a>
+            </div>
             <div class="register-link">
                 <a href="register.htm">Don't have an account? Register here</a>
             </div>
             <div class="error-message" id="errorMessage"></div>
         </form>
+        <div id="forgotDialog" class="dialog" style="display: none;">
+            <div class="dialog-content">
+                <div class="dialog-header">
+                    <h3>Forgot Password</h3>
+                    <span class="close-btn">&times;</span>
+                </div>
+                <div class="dialog-body">
+                    <div class="form-group">
+                        <label for="emailRecover">Enter your email:</label>
+                        <input type="email" id="emailRecover" required>
+                    </div>
+                    <button class="btn-submit">Submit</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        const forgotLink = document.querySelector('.forgot-link');
+        const forgotDialog = document.getElementById('forgotDialog');
+        const closeBtn = document.querySelector('.close-btn');
+        const submitBtn = document.querySelector('.btn-submit');
+        const emailRecover = document.getElementById('emailRecover');
+        // Hiển thị dialog
+        forgotLink.addEventListener('click', function () {
+            forgotDialog.style.display = 'flex';
+        });
+
+        // Đóng dialog khi click nút close
+        closeBtn.addEventListener('click', function () {
+            forgotDialog.style.display = 'none';
+            emailRecover.value = ''; // Reset input
+        });
+
+        // // Đóng dialog khi click bên ngoài
+        // window.addEventListener('click', function (e) {
+        //     if (e.target === forgotDialog) {
+        //         forgotDialog.style.display = 'none';
+        //         emailRecover.value = ''; // Reset input
+        //     }
+        // });
+
+        // Xử lý submit email
+        submitBtn.addEventListener('click', async function () {
+            const email = emailRecover.value;
+            if (!email) {
+                enhancedDialog.showMessage({
+                    title: "Message",
+                    message: "Please enter your email",
+                });
+                return;
+            }
+
+            try {
+                const response = await fetch('./config/config.json');
+                const config = await response.json();
+                const resetResponse = await apiService.post(
+                    `http://${config.ip}:8081/api/v1/auth/forgot-password`,
+                    { email: email },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+                console.log('resetResponse', resetResponse.data);
+                if (resetResponse.data.status == 200) {
+                    enhancedDialog.showMessage({
+                        title: "Message",
+                        message: resetResponse.data.message,
+                    });
+                    // alert('Password reset instructions have been sent to your email');
+                    forgotDialog.style.display = 'none';
+                    emailRecover.value = ''; // Reset input
+                }
+            } catch (error) {
+                // alert('An error occurred. Please try again later.');
+                console.error('Password reset error:', error);
+            }
+        });
+
+
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -203,7 +352,7 @@
             const token = localStorage.getItem('access_token');
             if (token) {
                 console.log('switch to index page.')
-                window.location.href = 'index.htm';
+                window.location.href = './index.htm';
             }
         }
 

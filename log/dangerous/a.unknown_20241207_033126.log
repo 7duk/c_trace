@@ -1,8 +1,0 @@
-[Sat Dec  7 03:31:26 2024] [INFO] Starting sandbox for program: ./file/dangerous/a.unknown
-[Sat Dec  7 03:31:26 2024] [INFO] Running './file/dangerous/a.unknown' in sandbox
-[Sat Dec  7 03:31:26 2024] [INFO] Child process created
-[Sat Dec  7 03:31:26 2024] [ERROR] execv failed: Exec format error
-[Sat Dec  7 03:31:26 2024] [INFO] Child exited with status 1
-[INFO] System Calls:
-[
-]

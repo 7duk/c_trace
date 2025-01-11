@@ -182,8 +182,8 @@ class EnhancedDialog {
         // Chuyển sang dạng confirm
         this.footer.className = 'dialog-footer confirm-mode';
         this.footer.innerHTML = `
-            <button class="dialog-btn dialog-btn-secondary" onclick="enhancedDialog.hide()">Hủy</button>
-            <button class="dialog-btn dialog-btn-primary" id="dialogConfirmBtn">Xác nhận</button>
+            <button class="dialog-btn dialog-btn-secondary" onclick="enhancedDialog.hide()">Cancel</button>
+            <button class="dialog-btn dialog-btn-primary" id="dialogConfirmBtn">Confirm</button>
         `;
 
         // Thêm sự kiện cho nút confirm
