@@ -1,41 +1,22 @@
-# Use GCC as the base image
 FROM gcc:latest
 
-# Install dependencies for libmagic and other tools
-RUN apt-get update && apt-get install -y \
-    libmagic-dev \       
-    # Install libmagic development libraries
-    evince \              
-    # PDF viewer (if needed)
-    wine \                
-    # Windows EXE runner (if needed)
-    default-jre \         
-    # Java runtime (if needed)
-    python3 \             
-    # Python (if needed)
-    nodejs \              
-    # Node.js (if needed)
-    libreoffice && \      
-    # Excel, Word (if needed)
-    apt-get clean
+# Combine all apt commands into a single RUN and clean up in the same layer
+RUN apt-get update --allow-unauthenticated --allow-insecure-repositories \
+    && apt-get install -y --no-install-recommends \
+        libmagic-dev \
+        evince \
+        wine \
+        default-jre \
+        python3 \
+        nodejs \
+        libreoffice \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt/archives/*
 
-# Set the working directory inside the container
 WORKDIR /app
+COPY file /app/file
+COPY sandbox_v7 /app/sandbox_v7
+RUN chmod +x /app/sandbox_v7
 
-# Copy the source code 'sandbox.c' and script 'entrypoint.sh' into the /app directory
-# COPY test /app/test
-# COPY sandbox_basic.c /app/sandbox_basic.c
-COPY sandbox /app/sandbox
-
-
-# Compile the C program using libmagic
-# RUN gcc -o sandbox sandbox_basic.c -lmagic
-
-# Ensure that the binary files are executable
-RUN chmod +x sandbox
-
-# Set the working directory to /app (optional, to simplify paths)
-WORKDIR /app
-
-# Set the entrypoint to the custom script
-ENTRYPOINT ["./sandbox"]
+ENTRYPOINT ["./sandbox_v7"]

@@ -1,5 +1,6 @@
 
 import os
+import re
 import numpy as np
 import json
 import torch
@@ -10,9 +11,83 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import ParameterGrid
 import copy
 from collections import Counter
+from run_docker import SandboxRunner
 
+
+class HyperparameterTuner:
+    def __init__(self, analyzer):
+        self.analyzer = analyzer
+        
+    def tune_parameters(self, X, y):
+        param_grid = {
+            'embedding_dim': [32, 64, 128],
+            'lstm_units': [64, 128, 256],
+            'batch_size': [16, 32, 64],
+            'learning_rate': [0.01, 0.001, 0.0001],
+            'dropout_rate': [0.3, 0.5, 0.7]
+        }
+        
+        best_score = 0
+        best_params = None
+        
+        for params in ParameterGrid(param_grid):
+            # Update model parameters
+            self.analyzer.embedding_dim = params['embedding_dim']
+            self.analyzer.lstm_units = params['lstm_units']
+            
+            # Create new model with updated parameters
+            vocab_size = len(self.analyzer.tokenizer)
+            self.analyzer.model = SyscallLSTMClassifier(
+                vocab_size=vocab_size,
+                embedding_dim=params['embedding_dim'],
+                lstm_units=params['lstm_units']
+            )
+            
+            # Modify dropout rates
+            self.analyzer.model.dropout1 = nn.Dropout(params['dropout_rate'])
+            self.analyzer.model.dropout2 = nn.Dropout(params['dropout_rate'])
+            
+            # Train with current parameters
+            X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2)
+            self.analyzer.train(
+                X_train, 
+                y_train,
+                batch_size=params['batch_size'],
+                learning_rate=params['learning_rate'],
+                epochs=30  # Reduced epochs for faster tuning
+            )
+            
+            # Evaluate on validation set
+            score = self.evaluate_model(X_val, y_val)
+            
+            if score > best_score:
+                best_score = score
+                best_params = params
+                
+            print(f"Params: {params}")
+            print(f"Score: {score}")
+            
+        return best_params, best_score
+    
+    def evaluate_model(self, X_val, y_val):
+        self.analyzer.model.eval()
+        val_dataset = SyscallDataset(X_val, y_val)
+        val_loader = DataLoader(val_dataset, batch_size=32)
+        
+        correct = 0
+        total = 0
+        
+        with torch.no_grad():
+            for batch_X, batch_y in val_loader:
+                outputs = self.analyzer.model(batch_X)
+                predicted = (outputs > 0.5).float()
+                total += batch_y.size(0)
+                correct += (predicted == batch_y).sum().item()
+                
+        return correct / total
 
 class SyscallDataset(Dataset):
     def __init__(self, sequences, labels):
@@ -28,7 +103,7 @@ class SyscallDataset(Dataset):
 
 class SyscallLSTMClassifier(nn.Module):
     def __init__(
-        self, vocab_size, max_sequence_length=100, embedding_dim=64, lstm_units=128
+        self, vocab_size, max_sequence_length=100000, embedding_dim=64, lstm_units=128
     ):
         super(SyscallLSTMClassifier, self).__init__()
 
@@ -63,7 +138,8 @@ class SyscallLSTMClassifier(nn.Module):
 
 
 class SyscallAnalyzer:
-    def __init__(self, max_sequence_length=100, embedding_dim=64, lstm_units=128):
+    
+    def __init__(self, max_sequence_length=100, embedding_dim=64, lstm_units=128, file_path = "/usr/src/linux-source-6.8.0/arch/x86/entry/syscalls/syscall_64.tbl"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {self.device}")
 
@@ -74,6 +150,48 @@ class SyscallAnalyzer:
         self.reverse_tokenizer = {}
         self.label_encoder = LabelEncoder()
         self.model = None
+
+        syscall_map = {}
+        # Open the file and process it line by line
+        with open(file_path, 'r') as file:
+            for line in file:
+                # Skip empty lines and comments
+                if not line.strip() or line.strip().startswith('#'):
+                    continue
+            
+                # Split the line by whitespace
+                parts = re.split(r'\s+', line.strip())
+            
+                # Ensure the line has enough parts: <number> <abi> <name> <entry>
+                if len(parts) >= 4:
+                    syscall_number = parts[0]
+                    syscall_name = parts[2]
+                
+                    # Add the syscall number and name to the dictionary
+                    syscall_map[int(syscall_number)] = syscall_name
+
+        self.syscall_behaviors = syscall_map
+
+    def analyze_syscall_sequence(self,prediction, syscall_sequence):
+        """Phân tích chuỗi syscall và trả về báo cáo đơn giản"""
+        print(f"Kết quả dự đoán: {prediction}")
+        syscalls = syscall_sequence.split(',')
+        
+        # Đếm số lần xuất hiện của mỗi syscall
+        syscall_counts = Counter(syscalls)
+        
+        # Tạo báo cáo đơn giản
+        report = {
+            'prediction':prediction,
+            'syscallFrequencies': {
+                self.syscall_behaviors.get(int(syscall), f'Syscall {syscall}'): count
+                for syscall, count in syscall_counts.items()
+                if count > 5  # Chỉ hiển thị các syscall xuất hiện nhiều hơn 5 lần
+            },
+            'totalSyscalls': len(syscalls)
+        }
+        
+        return report
 
     def augment_sequence(self, sequence):
         """Augment một syscall sequence"""
@@ -111,20 +229,19 @@ class SyscallAnalyzer:
             print(f"Tìm thấy {len(log_files)} tệp log trong thư mục {label}")
 
             for filename in log_files:
+                syscalls = []
                 filepath = os.path.join(current_dir, filename)
 
                 try:
                     with open(filepath, "r") as f:
                         for line in f:
-                            if "Syscalls" in line:
-                                syscalls_str = line.split(":")[1].strip()[1:-1]
-                                syscalls = [
-                                    s.strip() for s in syscalls_str.split(",") if s.strip()
-                                ]
-
-                                if syscalls:
-                                    X.append(syscalls)
-                                    y.append(label)
+                            match = re.search(r"Syscall number:\s*(\d+)", line)
+                            if match:
+                                syscalls_str = match.group(1)
+                                syscalls.append(syscalls_str)
+                    if syscalls:
+                        X.append(syscalls)
+                        y.append(label)            
                 except Exception as e:
                     print(f"Lỗi khi đọc tệp {filename}: {e}")
 
@@ -193,7 +310,7 @@ class SyscallAnalyzer:
         padded = np.zeros((len(sequences), self.max_sequence_length), dtype=int)
         for i, seq in enumerate(sequences):
             length = min(len(seq), self.max_sequence_length)
-            padded[i, :length] = seq[:length]
+            padded[i, :length] = seq[-length:]
         return padded
 
     def train(self, X, y, test_size=0.2, epochs=50, batch_size=32, learning_rate=0.001):
@@ -322,19 +439,6 @@ class SyscallAnalyzer:
         label_index = int(prediction.item() > 0.5)
         return self.label_encoder.classes_[label_index]
 
-
-    # def load_model(self, model_path="syscall_lstm_model"):
-    #     if os.path.exists(os.path.join(model_path, "model.pth")):
-    #         self.model = SyscallLSTMClassifier(
-    #             len(self.tokenizer), self.max_sequence_length, self.embedding_dim, self.lstm_units
-    #         ).to(self.device)
-    #         self.model.load_state_dict(torch.load(os.path.join(model_path, "model.pth")))
-    #         with open(os.path.join(model_path, "tokenizer.json"), "r") as f:
-    #             self.tokenizer = json.load(f)
-    #         self.label_encoder.classes_ = np.load(os.path.join(model_path, "label_classes.npy"))
-    #         print("Model loaded successfully.")
-    #         return True
-    #     return False
     def load_model(self, model_path="syscall_lstm_model"):
         if os.path.exists(os.path.join(model_path, "model.pth")):
             # Load the tokenizer first to get the correct vocab size
@@ -355,7 +459,6 @@ class SyscallAnalyzer:
             print("Model loaded successfully.")
             return True
 
-        print("No saved model found.")
         return False
 
 
@@ -366,15 +469,25 @@ class SyscallAnalyzer:
             log_directory = "./log"
             if not self.load_model():
                 print("No saved model found. Training a new model...")
+                # tuner = HyperparameterTuner(self)
                 X, y = self.prepare_data(log_directory)
                 X_processed, y_processed = self.preprocess_data(X, y)
+                # best_params, best_score = tuner.tune_parameters(X_processed, y_processed)
+                # print(f"Best parameters: {best_params}")
+                # print(f"Best score: {best_score}")
                 self.train(X_processed, y_processed)
                 self.save_model()
 
-            # test_syscall_sequence = "59,12,9,21,257,5,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,17,5,9,17,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,3,20"
             prediction = self.predict(test_syscall_sequence)
-            print(f"Dự đoán cho chuỗi thử nghiệm: {prediction}")
-            return prediction
+            
+            # Phân tích syscall
+            analysis = self.analyze_syscall_sequence(prediction,test_syscall_sequence)
+            
+            # # Tạo và hiển thị báo cáo
+            # report = self.generate_simple_report(prediction, analysis)
+            # print("\n" + report)
+            
+            return analysis
 
         except Exception as e:
             import traceback
@@ -385,6 +498,9 @@ class SyscallAnalyzer:
 
 
 if __name__ == "__main__":
-    test_syscall_sequence = "59,12,9,21,257,5,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,17,5,9,17,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,3,20"
+    # test_syscall_sequence = "59,12,9,21,257,5,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,17,5,9,17,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,9,9,3,257,0,5,9,9,9,9,9,3,257,0,5,9,9,3,20"
+    runner = SandboxRunner()
+    test_syscall_sequence,log_file  = runner.run(1, "./test")
+    print(f"log file --> {log_file}")
     analyst = SyscallAnalyzer()
     analyst.predict_file(test_syscall_sequence)

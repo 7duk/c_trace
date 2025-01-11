@@ -15,40 +15,9 @@
 #include <magic.h>
 #include <libgen.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
-#define MAX_SYSCALLS 1000000000
 #define PATH_MAX 4096
-// #define LOG_FILE "sandbox.log"
-
-// Danh sách các system call được phép
-int allowed_syscalls[] = {
-    SYS_open,       // 2
-    SYS_read,       // 0
-    SYS_write,      // 1
-    SYS_close,      // 3
-    SYS_exit,       // 60
-    SYS_exit_group, // 231
-    SYS_execve,     // 59
-    SYS_fork,       // 57
-    SYS_brk,        // 12
-    SYS_mmap,       // 9
-    // SYS_access, //21
-    SYS_openat,          // 257
-    SYS_pread64,         // 17
-    SYS_fstat,           // 5
-    SYS_arch_prctl,      // 158
-    SYS_set_tid_address, // 218
-    SYS_set_robust_list, // 273
-    SYS_rseq,            // 334
-    SYS_mprotect,        // 10
-    SYS_prlimit64,       // 302
-    SYS_munmap,          // 11
-    SYS_getrandom,       // 318
-    SYS_stat,            // Lấy thông tin file
-    SYS_statfs,          // Lấy thông tin hệ thống file
-    SYS_readlink,        // Đọc liên kết symlink
-};
-int num_allowed_syscalls = sizeof(allowed_syscalls) / sizeof(int);
 
 const char *interpreters[][2] = {
     {".py", "python3"},
@@ -60,15 +29,9 @@ const char *interpreters[][2] = {
     {".docx", "libreoffice"},
     {".xlsx", "libreoffice --calc"},
     {".csv", "libreoffice --calc"},
-    {".exe", "wine"},
-    // {".txt", "cat"},
-
-};
+    {".exe", "wine"}};
 
 const int num_interpreters = sizeof(interpreters) / sizeof(interpreters[0]);
-
-long syscall_numbers[MAX_SYSCALLS];
-int syscall_count = 0;
 
 enum LogLevel
 {
@@ -83,6 +46,19 @@ struct ResourceUsage
     long memory_usage;
     long io_operations;
 };
+
+static pid_t child_pid;
+
+// Hàm xử lý khi timeout
+void timeout_handler(int sig)
+{
+    if (child_pid > 0)
+    {
+        printf("Process timeout after 2 minutes. Killing process %d\n", child_pid);
+        kill(child_pid, SIGKILL);
+    }
+}
+
 // New function for logging
 void log_message(const char *log_file, enum LogLevel level, const char *format, ...)
 {
@@ -119,45 +95,8 @@ void log_message(const char *log_file, enum LogLevel level, const char *format, 
     va_end(args);
 
     fprintf(file, "\n");
+    fflush(file);
     fclose(file);
-}
-
-void get_source_info(unsigned long long rip, const char *binary)
-{
-    printf("Rip info : %llx\n", rip);
-    printf("Binary : %s\n", binary);
-    char command[PATH_MAX * 2];
-    snprintf(command, sizeof(command), "addr2line -e '%s' %llx", binary, rip);
-    FILE *fp = popen(command, "r");
-    if (fp == NULL)
-    {
-        perror("popen");
-        return;
-    }
-    char output[256];
-    if (fgets(output, sizeof(output), fp) != NULL)
-    {
-        printf("Source info: %s", output);
-    }
-    pclose(fp);
-}
-
-void get_executable_path(pid_t pid, char *buffer, size_t size)
-{
-    char path[PATH_MAX];
-    snprintf(path, sizeof(path), "/proc/%d/exe", pid);
-    ssize_t len = readlink(path, buffer, size - 1);
-    if (len != -1)
-    {
-        buffer[len] = '\0';
-        printf("Executable path: %s\n", buffer);
-    }
-    else
-    {
-        fprintf(stderr, "Failed to get executable path. Error: %s\n", strerror(errno));
-        strncpy(buffer, "unknown", size - 1);
-        buffer[size - 1] = '\0';
-    }
 }
 
 char *determine_interpreter(const char *filename, const char *log_file)
@@ -226,18 +165,6 @@ char *determine_interpreter(const char *filename, const char *log_file)
     return interpreter;
 }
 
-int is_syscall_allowed(long syscall)
-{
-    for (int i = 0; i < num_allowed_syscalls; i++)
-    {
-        if (syscall == allowed_syscalls[i])
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 int contains(const char *str, const char *substr)
 {
     return strstr(str, substr) != NULL;
@@ -275,34 +202,8 @@ void generate_log_file_name(const char *input_file, char *log_file, size_t size)
     }
     else
     {
-        snprintf(log_file, size, "%s_%s.log", base, timestamp); // Gắn đuôi .log vào tên file
+        snprintf(log_file, size, "./log/%s_%s.log", base, timestamp); // Gắn đuôi .log vào tên file
     }
-}
-
-// Sửa đổi hàm log_message để hỗ trợ ghi log syscall
-void log_syscall_summary(const char *filename, const char *log_file)
-{
-    FILE *file = fopen(log_file, "a");
-    if (file == NULL)
-    {
-        perror("Failed to open log file for syscall summary");
-        return;
-    }
-
-    // Ghi danh sách các syscall
-    fprintf(file, "Syscalls : [");
-    for (int i = 0; i < syscall_count; i++)
-    {
-        fprintf(file, "%ld%s",
-                syscall_numbers[i],
-                (i < syscall_count - 1) ? "," : "");
-    }
-    fprintf(file, "]\n");
-
-    fclose(file);
-
-    // Reset log count
-    syscall_count = 0;
 }
 
 void monitor_resources(pid_t pid, struct ResourceUsage *usage, const char *log_file)
@@ -319,23 +220,15 @@ void monitor_resources(pid_t pid, struct ResourceUsage *usage, const char *log_f
     }
 }
 
-void set_resource_limits()
-{
-    struct rlimit rl;
-    rl.rlim_cur = rl.rlim_max = 5; // 5 seconds CPU time
-    if (setrlimit(RLIMIT_CPU, &rl) == -1)
-    {
-        perror("setrlimit CPU");
-    }
-    rl.rlim_cur = rl.rlim_max = 50 * 1024 * 1024; // 50MB of memory
-    if (setrlimit(RLIMIT_AS, &rl) == -1)
-    {
-        perror("setrlimit AS");
-    }
-}
-
 void run_sandbox(pid_t child, pid_t parent_pid, const char *filename, const char *log_file)
 {
+    child_pid = child; // Lưu child PID để timeout_handler có thể truy cập
+
+    // Đặt handler cho SIGALRM
+    signal(SIGALRM, timeout_handler);
+    // Đặt timeout 2 phút (120 giây)
+    alarm(100);
+
     int status;
     struct user_regs_struct regs;
     int in_syscall = 0;
@@ -354,7 +247,6 @@ void run_sandbox(pid_t child, pid_t parent_pid, const char *filename, const char
         {
             printf("Child exited with status %d\n", WEXITSTATUS(status));
             log_message(log_file, LOG_INFO, "Child exited with status %d", WEXITSTATUS(status));
-            log_syscall_summary(filename, log_file);
             break;
         }
         else if (WIFSIGNALED(status))
@@ -376,44 +268,16 @@ void run_sandbox(pid_t child, pid_t parent_pid, const char *filename, const char
             {
                 printf("Syscall number: %lld\n", regs.orig_rax);
                 log_message(log_file, LOG_INFO, "Syscall number: %lld", regs.orig_rax);
-
-                // Lưu syscall vào mảng log
-                if (syscall_count < MAX_SYSCALLS)
-                {
-                    syscall_numbers[syscall_count++] = regs.orig_rax;
-                }
-                else
-                {
-                    log_message(log_file, LOG_WARNING, "Too many syscalls, truncating log");
-                }
-
-                if (!is_syscall_allowed(regs.orig_rax) && child != parent_pid)
-                {
-                    printf("Blocked syscall: %lld\n", regs.orig_rax);
-                    printf("Position: %lld\n", regs.rip);
-                    log_message(log_file, LOG_WARNING, "Blocked syscall: %lld at position: %lld", regs.orig_rax, regs.rip);
-
-                    char executable[PATH_MAX];
-                    get_executable_path(child, executable, sizeof(executable));
-                    get_source_info(regs.rip, executable);
-
-                    regs.rax = -EPERM;
-                    if (ptrace(PTRACE_SETREGS, child, NULL, &regs) == -1)
-                    {
-                        perror("ptrace SETREGS");
-                        log_message(log_file, LOG_ERROR, "ptrace SETREGS failed: %s", strerror(errno));
-                    }
-                }
                 in_syscall = 1;
             }
             else
             {
                 printf("Syscall return value: %lld\n", regs.rax);
                 log_message(log_file, LOG_INFO, "Syscall return value: %lld", regs.rax);
-
                 in_syscall = 0;
+                monitor_resources(child, &usage, log_file);
             }
-            monitor_resources(child, &usage, log_file);
+            
             if (ptrace(PTRACE_SYSCALL, child, NULL, NULL) == -1)
             {
                 perror("ptrace SYSCALL");
@@ -422,9 +286,11 @@ void run_sandbox(pid_t child, pid_t parent_pid, const char *filename, const char
             }
         }
     }
+    // Hủy alarm khi process kết thúc bình thường
+    alarm(0);
 }
 
-void run(int argc, char *argv[])
+char *run(int argc, char *argv[])
 {
     if (argc < 2)
     {
@@ -434,7 +300,6 @@ void run(int argc, char *argv[])
 
     char log_file[PATH_MAX];
     generate_log_file_name(argv[1], log_file, sizeof(log_file));
-
     // Xác định trình thông dịch
     char *interpreter = determine_interpreter(argv[1], log_file);
 
@@ -453,23 +318,7 @@ void run(int argc, char *argv[])
             log_message(log_file, LOG_ERROR, "ptrace TRACEME failed: %s", strerror(errno));
             exit(EXIT_FAILURE);
         }
-        set_resource_limits();
 
-        // if (interpreter)
-        // {
-        //     char *args[4];
-        //     args[0] = interpreter;
-        //     args[1] = argv[1];
-        //     args[2] = NULL;
-
-        //     if (execvp(interpreter, args) == -1)
-        //     {
-        //         log_message(log_file, LOG_ERROR, "execvp failed: %s", strerror(errno));
-        //         perror("execvp");
-        //         free(interpreter);
-        //         exit(EXIT_FAILURE);
-        //     }
-        // }
         if (interpreter)
         {
             // Tách lệnh thành các phần
@@ -511,7 +360,8 @@ void run(int argc, char *argv[])
         else
         {
             // Nếu không có trình thông dịch, thử thực thi trực tiếp
-            if (execv(argv[1], &argv[1]) == -1)
+            char *args[] = {argv[1], NULL}; 
+            if (execv(argv[1], args) == -1)
             {
                 log_message(log_file, LOG_ERROR, "execv failed: %s", strerror(errno));
                 perror("execv");
@@ -534,9 +384,49 @@ void run(int argc, char *argv[])
         log_message(log_file, LOG_ERROR, "fork failed: %s", strerror(errno));
         exit(EXIT_FAILURE);
     }
+    char *result = strdup(log_file); // Tạo bản sao động của log_file
+    return result;
 }
 int main(int argc, char *argv[])
 {
-    run(argc, argv);
+    // , "file/dangerous"
+    // Mảng chứa các đường dẫn thư mục
+    char *directories[] = {"file/dangerous", "file/safe"};
+
+    // Duyệt qua từng thư mục trong mảng
+    for (int dir_idx = 0; dir_idx < 2; dir_idx++)
+    {
+        DIR *dir = opendir(directories[dir_idx]);
+        if (dir == NULL)
+        {
+            perror("Failed to open directory");
+            return EXIT_FAILURE;
+        }
+
+        struct dirent *entry;
+        // Duyệt qua từng file trong thư mục
+        while ((entry = readdir(dir)) != NULL)
+        {
+            // Bỏ qua các thư mục '.' và '..'
+            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            {
+                continue;
+            }
+
+            // Tạo đường dẫn đầy đủ đến file
+            char file_path[1024];
+            snprintf(file_path, sizeof(file_path), "%s/%s", directories[dir_idx], entry->d_name);
+
+            // In thông tin và gọi hàm run với file_path
+            printf("Processing file: %s\n", file_path);
+
+            // Cập nhật các tham số argv với đường dẫn file (ví dụ chỉ sử dụng argv[1] để truyền file vào hàm run)
+            char *argv_copy[] = {argv[0], file_path}; // Lưu lại argv[0] và file_path
+            run(2, argv_copy);                        //
+        }
+
+        closedir(dir); // Đóng thư mục sau khi duyệt xong
+    }
+    // run(argc, argv);
     return 0;
 }

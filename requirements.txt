@@ -7,4 +7,41 @@ pytourch//
 
 2024-12-14 09:31
 
-docker build -t get_syscall:1.0
+// leejnh build docker
+docker build -t get_syscall:1.0 .
+
+//lenh liet ke docker da chay
+sudo docker ps -a
+
+// copy log tu docker container sng local log folder
+sudo docker cp c50c0730f0cd:/app/log ./log
+
+//run docker
+docker run --rm -it custom-image:1.0
+
+// stop all container
+docker rm $(docker ps -aq)  / docker rm -f $(docker ps -aq)
+
+//remove all images.
+docker rmi -f $(docker images -q) / docker rmi -f $(docker images -aq)
+
+//clear all in docker.
+docker system prune -a --volumes
+
+gcc -shared -o sandbox.so sandbox_basic.c -lmagic -fPIC
+
+docker run -it -v $(pwd)/file/safe/20nh14_102200166_NguyenDacDuc.docx:/app/20nh14_102200166_NguyenDacDuc.docx sandbox_container /app/20nh14_102200166_NguyenDacDuc.docx
+
+docker build -t runner_container -f Dockerfile.test .
+
+2024-12-19 11:30 --- edb3d030a4a033bae41057c19437dff31c171573b65afab0acd433cbd0572a17 --- exe ---latest --- 80 items
+
+jar
+
+py 2024-12-10 13:10
+
+js 2024-12-04 18:11
+
+csv
+
+pdf 2024-09-10 16:24

@@ -27,19 +27,19 @@ class SandboxRunner:
             return None
 
     def extract_syscalls(self, file_path):
-        syscalls = ""
+        syscalls = []
         try:
             with open(file_path, 'r') as file:
                 for line in file:
-                    match = re.search(r'Syscalls\s*:\s*\[(.*?)\]', line)
+                    match = re.search(r"Syscall number:\s*(\d+)", line)
                     if match:
-                        syscalls = match.group(1)
-                        break
+                        syscalls_str = match.group(1)
+                        syscalls.append(syscalls_str)
         except FileNotFoundError:
             print(f"File not found: {file_path}")
         except Exception as e:
             print(f"Error reading file: {e}")
-        return syscalls
+        return ",".join(syscalls)
 
     def copy_file_from_container(self, container_id, container_file_path, host_output_path):
         try:
@@ -74,9 +74,8 @@ class SandboxRunner:
         try:
             with open(file_predict, 'r') as file:
                 for line in file:
-                    match = re.search(r'Syscalls\s*:\s*\[(.*?)\]', line)
-                    if not match:
-                       log.append(line)
+                    if not re.search(r'Syscall return value:', line):
+                       log.append(re.sub(r"^\[.*?\]\s+\[\w+\]\s+", "", line))
         except FileNotFoundError:
             print(f"File not found: {file_predict}")
         except Exception as e:
@@ -85,5 +84,6 @@ class SandboxRunner:
 
 if __name__ == "__main__":
     runner = SandboxRunner()
-    syscalls = runner.run(1, "/file/safe/data.csv")
+    syscalls,log_file = runner.run(1, "/file/dangerous/00b05fc39fbf351c26f0a7f354b25eca894890250bf388d6cfdc3ec47d09ff0d.exe")
+    print("log_file ---> " + log_file)
     print("Syscall ---> " + syscalls)

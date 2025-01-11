@@ -26,8 +26,8 @@ def run_in_sandbox():
     syscalls, log_file = runner.run(1, file_local)
     logs = runner.logs(log_file)
     analyst = SyscallAnalyzer()
-    aiPredict = analyst.predict_file(syscalls)
-    return jsonify({'status': 'success', 'aiDetech': aiPredict, 'ptraceOutput': logs})
+    predict = analyst.predict_file(syscalls)
+    return jsonify({'status': 'success', 'predict': predict, 'ptraceOutput': logs})
 
 
 if __name__ == '__main__':
