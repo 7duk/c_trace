@@ -204,6 +204,33 @@
         #loadingIndicator {
             text-align: center;
             padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .spinner {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -239,7 +266,7 @@
                 </tbody>
             </table>
             <div id="loadingIndicator" style="display: none;">
-                <span>Loading...</span>
+                <span class="spinner"></span>
             </div>
         </div>
     </div>
@@ -260,7 +287,7 @@
             try {
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
-                let requestUrl = `http://${config.ip}:8081/api/v1/auth/logout?userId=${userId}`;
+                let requestUrl = `${config.url}/api/v1/auth/logout?userId=${userId}`;
                 const result = await apiService.get(requestUrl);
                 if (result.data.status === '200') {
                     localStorage.removeItem('access_token');
@@ -294,7 +321,7 @@
             const config = await response.json();
             const accessToken = localStorage.getItem('access_token');
             const userId = localStorage.getItem('user_id');
-            const url = `http://${config.ip}:8081/api/v1/requests/info?page=${page}&limit=${size}&userId=${userId}`;
+            const url = `${config.url}/api/v1/requests/info?page=${page}&limit=${size}&userId=${userId}`;
             try {
                 const result = await apiService.get(url, {
                     headers: {

@@ -13,14 +13,14 @@ class EnhancedDialog {
             <div id="enhancedDialog" class="dialog-overlay">
                 <div class="dialog-content">
                     <div class="dialog-header">
-                        <h3 id="dialogTitle">Thông báo</h3>
+                        <h3 id="dialogTitle">Notification</h3>
                         <button class="dialog-close" onclick="enhancedDialog.hide()">&times;</button>
                     </div>
                     <div class="dialog-body">
                         <p id="dialogMessage"></p>
                     </div>
                     <div class="dialog-footer" id="dialogFooter">
-                        <button class="dialog-btn dialog-btn-primary" id="dialogOkBtn">Đóng</button>
+                        <button class="dialog-btn dialog-btn-primary" id="dialogOkBtn">Close</button>
                     </div>
                 </div>
             </div>
@@ -161,13 +161,13 @@ class EnhancedDialog {
     showMessage(options = {}) {
         const { title, message } = options;
         this.dialog.style.display = 'flex';
-        document.getElementById('dialogTitle').textContent = title || 'Thông báo';
+        document.getElementById('dialogTitle').textContent = title || 'Notification';
         document.getElementById('dialogMessage').textContent = message || '';
         
         // Reset về dạng thông báo đơn giản
         this.footer.className = 'dialog-footer';
         this.footer.innerHTML = `
-            <button class="dialog-btn dialog-btn-primary" onclick="enhancedDialog.hide()">Đóng</button>
+            <button class="dialog-btn dialog-btn-primary" onclick="enhancedDialog.hide()">Close</button>
         `;
     }
 
@@ -175,7 +175,7 @@ class EnhancedDialog {
     showConfirm(options = {}) {
         const { title, message, onConfirm } = options;
         this.dialog.style.display = 'flex';
-        document.getElementById('dialogTitle').textContent = title || 'Xác nhận';
+        document.getElementById('dialogTitle').textContent = title || 'Confirm';
         document.getElementById('dialogMessage').textContent = message || 'Bạn có chắc chắn muốn thực hiện hành động này?';
         this.confirmCallback = onConfirm;
 

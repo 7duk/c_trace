@@ -1,3 +1,5 @@
 {
-    "ip":"localhost"
+    "url1":"https://raccoon-sensible-rarely.ngrok-free.app",
+    "url":"http://localhost:8081"
+   
 }

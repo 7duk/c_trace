@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="./service/dialog.js"></script>
+    <script src="./service/spinner.js"></script>
     <title>Enhanced Request Monitor</title>
     <style>
         :root {
@@ -356,8 +357,8 @@
 
         <div class="card status-card">
             <div class="status-indicator">
-                <div id="status-dot" class="status-dot status-completed"></div>
-                <span id="status-text">COMPLETED</span>
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text"></span>
             </div>
             <div>
                 <div id="request-id" class="request-id"></div>
@@ -400,51 +401,55 @@
         }
 
         function updateUI(data) {
-            if (!data) return;
+            try {
+                if (!data) return;
+                window.spinnerService.show();
+                // Update status
+                const statusDot = document.getElementById('status-dot');
+                const statusText = document.getElementById('status-text');
+                statusDot.className = `status-dot status-${data.responseStatus.toLowerCase()}`;
+                statusText.textContent = data.responseStatus;
 
-            // Update status
-            const statusDot = document.getElementById('status-dot');
-            const statusText = document.getElementById('status-text');
-            statusDot.className = `status-dot status-${data.responseStatus.toLowerCase()}`;
-            statusText.textContent = data.responseStatus;
+                // Update request info
+                document.getElementById('request-id').textContent = `Request ID: ${data.requestID}`;
+                document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
 
-            // Update request info
-            document.getElementById('request-id').textContent = `Request ID: ${data.requestID}`;
-            document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+                // Update prediction
+                const prediction = document.getElementById('prediction');
+                prediction.textContent = data.predict?.prediction;
+                prediction.className = `prediction ${data.predict?.prediction.toLowerCase()}`;
 
-            // Update prediction
-            const prediction = document.getElementById('prediction');
-            prediction.textContent = data.predict?.prediction;
-            prediction.className = `prediction ${data.predict?.prediction.toLowerCase()}`;
-
-            // Update syscall grid
-            const syscallGrid = document.getElementById('syscall-grid');
-            syscallGrid.innerHTML = '';
-            if (data?.predict?.syscallFrequencies && typeof data.predict.syscallFrequencies === 'object') {
-                Object.entries(data.predict.syscallFrequencies).forEach(([syscall, count]) => {
-                    const item = document.createElement('div');
-                    item.className = 'syscall-item';
-                    item.innerHTML = `
+                // Update syscall grid
+                const syscallGrid = document.getElementById('syscall-grid');
+                syscallGrid.innerHTML = '';
+                if (data?.predict?.syscallFrequencies && typeof data.predict.syscallFrequencies === 'object') {
+                    Object.entries(data.predict.syscallFrequencies).forEach(([syscall, count]) => {
+                        const item = document.createElement('div');
+                        item.className = 'syscall-item';
+                        item.innerHTML = `
                             <span class="syscall-name">${syscall}</span>
                             <span class="syscall-count">${count} calls</span>
                     `;
-                    syscallGrid.appendChild(item);
-                });
-            } else {
-                console.warn('syscallFrequencies is not defined or not an object:', data?.predict?.syscallFrequencies);
-            }
+                        syscallGrid.appendChild(item);
+                    });
+                } else {
+                    console.warn('syscallFrequencies is not defined or not an object:', data?.predict?.syscallFrequencies);
+                }
 
-            // Update total syscalls
-            document.getElementById('total-syscalls').innerHTML = `
+                // Update total syscalls
+                document.getElementById('total-syscalls').innerHTML = `
                 <span class="syscall-name">Total Syscalls</span>
-                <span class="syscall-count">${data.predict!= null ? data.predict?.totalSyscalls:0}</span>
+                <span class="syscall-count">${data.predict != null ? data.predict?.totalSyscalls : 0}</span>
             `;
 
-            // Update ptrace output
-            const ptraceOutput = document.getElementById('ptrace-output');
-            ptraceOutput.innerHTML = data.ptraceOutput
-                .map(line => `<div class="ptrace-line">${line}</div>`)
-                .join('');
+                // Update ptrace output
+                const ptraceOutput = document.getElementById('ptrace-output');
+                ptraceOutput.innerHTML = data.ptraceOutput
+                    .map(line => `<div class="ptrace-line">${line}</div>`)
+                    .join('');
+            } finally {
+                window.spinnerService.hide();
+            }
         }
 
         // WebSocket connection

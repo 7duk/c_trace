@@ -2,7 +2,8 @@ const axiosInstance = axios.create({
     baseURL: 'https://api.example.com', // URL của API của bạn
     timeout: 30000, // timeout 10 giây
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true' 
     },
 });
 
@@ -44,11 +45,12 @@ const TokenManager = {
                 const responseConfig = await fetch('./config/config.json');
                 const config = await responseConfig.json();
                 const userId = localStorage.getItem('user_id');
-                const response = await fetch(`http://${config.ip}:8081/api/v1/auth/refresh-token?userId=${userId}`, {
+                const response = await fetch(`${config.url}/api/v1/auth/refresh-token?userId=${userId}`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true' 
                     }
                 });
                 const data = await response.json(); // Đảm bảo parse dữ liệu JSON
@@ -56,12 +58,9 @@ const TokenManager = {
                 if (data?.data.accessToken) {
                     this.setToken(data.data.accessToken);
                     setValueCookie('refreshToken', data.data.refreshToken, 30);
-                    localStorage.setItem('fullname',data.data.fullname);
                     localStorage.setItem('user_id',data.data.userID);
                     localStorage.setItem('role',data.data.role);
                     localStorage.setItem('mail',data.data.email);
-                    // localStorage.setItem('username',data.data.fullname);
-                    localStorage.setItem('created_at',data.data.createdAt);
                     return data.data.accessToken;
                 }
                 return null;

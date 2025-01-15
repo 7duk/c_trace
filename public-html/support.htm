@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./service/apiService.js"></script>
     <script src="./service/dialog.js"></script>
+    <script src="./service/spinner.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -212,15 +213,17 @@
                 status: 'new',
                 createdAt: new Date().toLocaleString(),
             };
-            callTicketApi(ticket);
-            this.reset();
+            if(callTicketApi(ticket)){
+                this.reset();
+            }
         });
 
         async function callTicketApi(ticket) {
             try {
+                window.spinnerService.show();
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
-                const requestUrl = `http://${config.ip}:8081/api/v1/supports`;
+                const requestUrl = `${config.url}/api/v1/supports`;
 
                 const { createdAt, status, id, ...newTicket } = ticket;
                 console.log(newTicket);
@@ -232,6 +235,7 @@
                     });
                     addTicketToList(ticket);
                 }
+                return true;
 
             } catch (error) {
                 console.log(error);
@@ -239,6 +243,10 @@
                     title: "Message",
                     message: error.response.data,
                 });
+                return false;
+            }
+            finally {
+                window.spinnerService.hide();
             }
         }
 

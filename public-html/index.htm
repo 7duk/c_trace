@@ -9,6 +9,7 @@
   <script src="./service/utils.js"></script>
   <script src="./service/apiService.js"></script>
   <script src="./service/dialog.js"></script>
+  <script src="./service/spinner.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
@@ -534,9 +535,10 @@
     async function handleLogout() {
       const userId = localStorage.getItem('user_id');
       try {
+        window.spinnerService.show();
         const response = await fetch('./config/config.json');
         const config = await response.json();
-        let requestUrl = `http://${config.ip}:8081/api/v1/auth/logout?userId=${userId}`;
+        let requestUrl = `${config.url}/api/v1/auth/logout?userId=${userId}`;
         const result = await apiService.get(requestUrl);
         if (result.data.status === '200') {
           localStorage.removeItem('access_token');
@@ -554,6 +556,9 @@
       catch (error) {
         console.error('Error fetching data:', error);
         return null;
+      }
+      finally {
+        window.spinnerService.hide();
       }
     }
 
@@ -636,6 +641,95 @@
       }
     }
 
+    function resetFileUpload() {
+      // Reset file input
+      const input = document.querySelector('input[type="file"]');
+      if (input) {
+        input.value = '';
+      }
+
+      // Reset progress bar và status
+      const progressBar = document.getElementById("progressBar");
+      if (progressBar) progressBar.value = 0;
+
+      const status = document.getElementById("status");
+      if (status) status.innerHTML = "";
+
+      const loadedTotal = document.getElementById("loaded_n_total");
+      if (loadedTotal) loadedTotal.innerHTML = "";
+
+      // Reset lại giao diện drop zone ban đầu
+      const dropArea = document.querySelector(".drop-zone");
+      dropArea.innerHTML = `
+        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+        <h4>Drag and drop your file here or click to browse</h4>
+        <p style="color: gray; font-size: 12px; padding-bottom: 5px;">
+            Supported file types: [.jar,.py,.js,.xlsx,.csv,.sh,.doc,.docx,.exe]
+        </p>
+        <input type="file" id="fileID" hidden accept=".jar,.py,.js,.xlsx,.csv,.sh,.doc,.docx,.exe" />
+        <button class="btn">
+            <i class="fas fa-file-upload"></i>
+            Select File
+        </button>
+        <p id="errorMessage" style="color: red; display: none;">Invalid file type. Please select a valid file.</p>
+    `;
+
+      // Gán lại các event listeners
+      const newDropArea = document.querySelector(".drop-zone");
+      const newButton = newDropArea.querySelector("button");
+      const newInput = newDropArea.querySelector("input");
+
+      // Gán lại event cho button
+      newButton.onclick = (event) => {
+        if (!checkAuth()) {
+          event.preventDefault();
+          newInput.click();
+        }
+      };
+
+      // Gán lại event cho input
+      newInput.addEventListener("change", function (e) {
+        const files = e.target.files;
+        if (files.length) {
+          handleFiles(files);
+        }
+      });
+
+      // Gán lại các events drag and drop
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        newDropArea.addEventListener(eventName, preventDefaults, false);
+      });
+
+      newDropArea.addEventListener("dragenter", (event) => {
+        preventDefaults(event);
+        newDropArea.classList.add("active");
+      });
+
+      newDropArea.addEventListener("dragover", (event) => {
+        preventDefaults(event);
+        newDropArea.classList.add("active");
+      });
+
+      newDropArea.addEventListener("dragleave", (event) => {
+        preventDefaults(event);
+        if (!newDropArea.contains(event.relatedTarget)) {
+          newDropArea.classList.remove("active");
+        }
+      });
+
+      newDropArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        newDropArea.classList.remove("active");
+
+        const files = event.dataTransfer.files;
+        if (files.length) {
+          newInput.files = files;
+          handleFiles(files);
+        }
+      });
+    }
+
+
     input.addEventListener("change", function (e) {
       const files = e.target.files;
       if (files.length) {
@@ -645,6 +739,7 @@
 
     async function uploadFile() {
       try {
+        window.spinnerService.show();
         const response = await fetch('./config/config.json');
         const config = await response.json();
         let formData = new FormData();
@@ -653,7 +748,7 @@
         formData.append("file", file);
         const accessToken = localStorage.getItem('access_token');
         const userId = localStorage.getItem('user_id');
-        const responseData = await apiService.post(`http://${config.ip}:8081/api/v1/upload?userId=${userId}`,
+        const responseData = await apiService.post(`${config.url}/api/v1/upload?userId=${userId}`,
           formData,
           {
             headers: {
@@ -670,6 +765,10 @@
       } catch (error) {
         console.error('Error fetching data:', error);
         errorHandler();
+        resetFileUpload();
+      }
+      finally {
+        window.spinnerService.hide();
       }
     }
 

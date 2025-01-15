@@ -8,6 +8,7 @@
     <script src="./service/apiService.js"></script>
     <script src="./service/dialog.js"></script>
     <script src="./service/utils.js"></script>
+    <script src="./service/spinner.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Quản lý Hệ thống Hỗ trợ</title>
     <style>
@@ -579,9 +580,10 @@
     async function handleLogout() {
         const userId = localStorage.getItem('user_id');
         try {
+            window.spinnerService.show();
             const response = await fetch('./config/config.json');
             const config = await response.json();
-            let requestUrl = `http://${config.ip}:8081/api/v1/auth/logout?userId=${userId}`;
+            let requestUrl = `${config.url}/api/v1/auth/logout?userId=${userId}`;
             const result = await apiService.get(requestUrl);
             if (result.data.status === '200') {
                 localStorage.removeItem('access_token');
@@ -599,6 +601,9 @@
             console.error('Error fetching data:', error);
             return null;
         }
+        finally {
+            window.spinnerService.hide();
+        }
     }
 
     function goBack() {
@@ -614,9 +619,10 @@
         const res = await fetch('./config/config.json');
         const config = await res.json();
         const ticketId = document.querySelector('.ticket-detail p strong').nextSibling.nodeValue.trim();
-        const url = `http://${config.ip}:8081/api/v1/supports/${ticketId}/resolver`;
+        const url = `${config.url}/api/v1/supports/${ticketId}/resolver`;
 
         try {
+            window.spinnerService.show();
             const response = await apiService.put(url, { status: newStatus }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -639,6 +645,9 @@
         } catch (error) {
             console.error('Error updating status:', error);
         }
+        finally {
+            window.spinnerService.hide();
+        }
     }
     async function sendResponse() {
 
@@ -650,8 +659,9 @@
         const token = localStorage.getItem('access_token');
         const res = await fetch('./config/config.json');
         const config = await res.json();
-        const url = `http://${config.ip}:8081/api/v1/supports/${newTicket.supportId}/resolver`;
+        const url = `${config.url}/api/v1/supports/${newTicket.supportId}/resolver`;
         try {
+            window.spinnerService.show();
             const response = await apiService.put(url, newTicket, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -674,6 +684,9 @@
         } catch (error) {
             console.error('Error updating status:', error);
         }
+        finally {
+            window.spinnerService.hide();
+        }
     }
 
     async function updateStatus(newStatus) {
@@ -681,9 +694,10 @@
         const res = await fetch('./config/config.json');
         const config = await res.json();
         const ticketId = currentTicketId;
-        const url = `http://${config.ip}:8081/api/v1/supports/${ticketId}/status`;
+        const url = `${config.url}/api/v1/supports/${ticketId}/status`;
 
         try {
+            window.spinnerService.show();
             const response = await apiService.put(url, { status: newStatus }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -706,6 +720,9 @@
         } catch (error) {
             console.error('Error updating status:', error);
         }
+        finally {
+            window.spinnerService.hide();
+        }
     }
 
 
@@ -713,7 +730,7 @@
         const token = localStorage.getItem('access_token');
         const res = await fetch('./config/config.json');
         const config = await res.json();
-        const url = `http://${config.ip}:8081/api/v1/supports?page=${page}&size=${size}&title=${title}&status=${status}`;
+        const url = `${config.url}/api/v1/supports?page=${page}&size=${size}&title=${title}&status=${status}`;
         console.log(url);
         const response = await apiService.get(url, {
             headers: {
@@ -728,6 +745,7 @@
 
     async function loadTickets() {
         try {
+            window.spinnerService.show();
             const response = await searchTickets();
             if (response) {
                 const content = response.content;
@@ -753,6 +771,9 @@
             }
         } catch (error) {
             console.error('Error loading tickets:', error);
+        }
+        finally {
+            window.spinnerService.hide();
         }
     }
     function updatePagination() {
@@ -799,7 +820,11 @@
         await loadTickets();
     }
 
-    initialize();
+    document.addEventListener('DOMContentLoaded', () => {
+        initialize();
+    });
+
+
 
     async function searchTickets() {
         // currentPage = 0; const searchTitle = document.querySelector('input[type="text"]').value;

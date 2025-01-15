@@ -532,7 +532,7 @@
                 const email = localStorage.getItem('temp_mail');
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
-                const requestUrl = `http://${config.ip}:8081/api/v1/auth/verify?email=${email}`;
+                const requestUrl = `${config.url}/api/v1/auth/verify?email=${email}`;
 
 
                 const result = await apiService.post(requestUrl, {
@@ -558,7 +558,7 @@
                 const email = localStorage.getItem('temp_mail');
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
-                const requestUrl = `http://${config.ip}:8081/api/v1/auth/resend-code?email=${email}`;
+                const requestUrl = `${config.url}/api/v1/auth/resend-code?email=${email}`;
 
                 const result = await apiService.get(requestUrl);
                 console.log(result.data.status);
@@ -613,7 +613,7 @@
         const simulateApiCall = async (formData) => {
             const response = await fetch('./config/config.json');
             const config = await response.json(); // Lấy cấu hình từ file config
-            let requestUrl = `http://${config.ip}:8081/api/v1/auth/register`;
+            let requestUrl = `${config.url}/api/v1/auth/register`;
             const result = await apiService.post(requestUrl, formData);
             const mail = document.getElementById('email').value.trim();
             localStorage.setItem('temp_mail', mail);

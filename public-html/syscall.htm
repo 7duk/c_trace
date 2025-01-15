@@ -9,6 +9,7 @@
     <script src="./service/apiService.js"></script>
     <script src="./service/utils.js"></script>
     <script src="./service/dialog.js"></script>
+    <script src="./service/spinner.js"></script>
     <title>System Call Viewer</title>
     <style>
         :root {
@@ -192,9 +193,10 @@
         async function handleLogout() {
             const userId = localStorage.getItem('user_id');
             try {
+                window.spinnerService.show();
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
-                let requestUrl = `http://${config.ip}:8081/api/v1/auth/logout?userId=${userId}`;
+                let requestUrl = `${config.url}/api/v1/auth/logout?userId=${userId}`;
                 const result = await apiService.get(requestUrl);
                 if (result.data.status === '200') {
                     localStorage.removeItem('access_token');
@@ -212,6 +214,9 @@
                 console.error('Error fetching data:', error);
                 return null;
             }
+            finally {
+                window.spinnerService.hide();
+            }
         }
 
         function searchSyscall(event) {
@@ -220,6 +225,7 @@
 
         async function fetchSyscalls(key) {
             try {
+                window.spinnerService.show();
                 const token = localStorage.getItem('access_token');
 
                 // Lấy dữ liệu từ config.json
@@ -227,7 +233,7 @@
                 const config = await configResponse.json();
 
                 // Xây dựng URL với điều kiện key
-                const url = `http://${config.ip}:8081/api/v1/syscall${key ? `/${key}` : ''}`;
+                const url = `${config.url}/api/v1/syscall${key ? `/${key}` : ''}`;
 
                 // Gửi request POST
                 const response = await apiService.get(url, {
@@ -243,6 +249,9 @@
                 console.error('Error:', error);
                 document.getElementById('syscall-container').innerHTML =
                     '<div class="syscall-card">Lỗi khi tải dữ liệu</div>';
+            }
+            finally {
+                window.spinnerService.hide();
             }
         }
 
@@ -273,8 +282,11 @@
 
         document.getElementById('searchInput').addEventListener('input', e => filterSyscalls(e.target.value));
 
-        fetchSyscalls("");
-        document.addEventListener('DOMContentLoaded', checkAuth);
+       ;
+        document.addEventListener('DOMContentLoaded',async function(){
+             checkAuth();
+            await fetchSyscalls("")
+        });
     </script>
 </body>
 

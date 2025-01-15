@@ -10,6 +10,7 @@
     <script src="./service/utils.js"></script>
     <script src="./service/apiService.js"></script>
     <script src="./service/dialog.js"></script>
+    <script src="./service/spinner.js"></script>
     <style>
         :root {
             --primary-bg: #ffffff;
@@ -66,6 +67,7 @@
         }
 
         .form-group {
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
@@ -159,14 +161,21 @@
             padding: 20px;
             border-radius: var(--border-radius);
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
         }
 
         .dialog-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
+        }
+
+        .dialog-body {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 1rem;
         }
 
         .close-btn {
@@ -225,10 +234,14 @@
         <div id="forgotDialog" class="dialog" style="display: none;">
             <div class="dialog-content">
                 <div class="dialog-header">
-                    <h3>Forgot Password</h3>
+                    <h3>Help with Password</h3>
                     <span class="close-btn">&times;</span>
                 </div>
                 <div class="dialog-body">
+                    <div class="form-group">
+                        <label for="username_fg">Enter your username:</label>
+                        <input type="text" class="username_fg">
+                    </div>
                     <div class="form-group">
                         <label for="emailRecover">Enter your email:</label>
                         <input type="email" id="emailRecover" required>
@@ -247,6 +260,8 @@
         const emailRecover = document.getElementById('emailRecover');
         // Hiển thị dialog
         forgotLink.addEventListener('click', function () {
+            const username = document.getElementById('username').value.trim();
+            document.querySelector('.username_fg').value = `${username}`;
             forgotDialog.style.display = 'flex';
         });
 
@@ -257,16 +272,24 @@
         });
 
         // // Đóng dialog khi click bên ngoài
-        // window.addEventListener('click', function (e) {
-        //     if (e.target === forgotDialog) {
-        //         forgotDialog.style.display = 'none';
-        //         emailRecover.value = ''; // Reset input
-        //     }
-        // });
+        window.addEventListener('click', function (e) {
+            if (e.target === forgotDialog) {
+                forgotDialog.style.display = 'none';
+                emailRecover.value = ''; // Reset input
+            }
+        });
 
         // Xử lý submit email
         submitBtn.addEventListener('click', async function () {
+            const usernameFg = document.querySelector('.username_fg').value;
             const email = emailRecover.value;
+            if (!usernameFg) {
+                enhancedDialog.showMessage({
+                    title: "Message",
+                    message: "Please enter your username",
+                });
+                return;
+            }
             if (!email) {
                 enhancedDialog.showMessage({
                     title: "Message",
@@ -276,11 +299,12 @@
             }
 
             try {
+                window.spinnerService.show();
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
                 const resetResponse = await apiService.post(
-                    `http://${config.ip}:8081/api/v1/auth/forgot-password`,
-                    { email: email },
+                    `${config.url}/api/v1/auth/forgot-password`,
+                    { email: email, username: usernameFg },
                     {
                         headers: {
                             'Content-Type': 'application/json'
@@ -301,6 +325,9 @@
                 // alert('An error occurred. Please try again later.');
                 console.error('Password reset error:', error);
             }
+            finally {
+                window.spinnerService.hide();
+            }
         });
 
 
@@ -313,9 +340,10 @@
             const errorMessage = document.getElementById('errorMessage');
 
             try {
+                window.spinnerService.show();
                 const response = await fetch('./config/config.json');
                 const config = await response.json();
-                const loginResponse = await apiService.post(`http://${config.ip}:8081/api/v1/auth/login`,
+                const loginResponse = await apiService.post(`${config.url}/api/v1/auth/login`,
                     {
                         username: username,
                         password: password
@@ -330,14 +358,11 @@
                 if (loginResponse.status == 200) {
                     const data = loginResponse.data.data;
                     // Store user data and token in localStorage
-                    localStorage.setItem('username', username);
                     setValueCookie('refreshToken', data.refreshToken, 30);
                     localStorage.setItem('access_token', data.accessToken);
                     localStorage.setItem('role', data.role);
-                    localStorage.setItem('fullname', data.fullname);
                     localStorage.setItem('mail', data.email);
                     localStorage.setItem('user_id', data.userID);
-                    localStorage.setItem("created_at", data.createdAt);
                     switchPage();
 
                 }
@@ -346,9 +371,13 @@
                 errorMessage.textContent = 'An error occurred. Please try again later.';
                 console.error('Login error:', error);
             }
+            finally {
+                window.spinnerService.hide();
+            }
         });
 
         function switchPage() {
+            console.log('switchPage')
             const token = localStorage.getItem('access_token');
             if (token) {
                 console.log('switch to index page.')
